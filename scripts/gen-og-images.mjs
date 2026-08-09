@@ -14,7 +14,7 @@
 //
 //   node scripts/gen-og-images.mjs           # only missing cards
 //   node scripts/gen-og-images.mjs --force   # redraw everything
-import { mkdirSync, existsSync, writeFileSync, readdirSync, readFileSync } from "node:fs";
+import { mkdirSync, existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, dirname, basename, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -65,6 +65,10 @@ function contentCards(dir, kicker, prefix) {
       slug: `${prefix}-${basename(f, ".md")}`,
       kicker,
       title: frontmatterTitle(join(abs, f)) ?? basename(f, ".md"),
+      // Retitle a post and its card must follow. Skipping purely on "the file
+      // exists" would pin the card to whatever the title was the first time
+      // it was drawn, and nothing would ever say so.
+      source: join(abs, f),
     }));
 }
 
@@ -112,10 +116,18 @@ const svg = ({ kicker, title }) => {
 </svg>`;
 };
 
+// A card is stale if it's missing, or older than the Markdown it was drawn
+// from. Section cards have no source file, so "exists" is all there is.
+const isStale = (out, source) => {
+  if (!existsSync(out)) return true;
+  if (!source) return false;
+  return statSync(source).mtimeMs > statSync(out).mtimeMs;
+};
+
 let built = 0, skipped = 0;
 for (const card of cards) {
   const out = join(outDir, `${card.slug}.png`);
-  if (!force && existsSync(out)) { skipped++; continue; }
+  if (!force && !isStale(out, card.source)) { skipped++; continue; }
   await sharp(Buffer.from(svg(card))).png().toFile(out);
   built++;
 }
