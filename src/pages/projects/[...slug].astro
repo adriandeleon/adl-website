@@ -1,6 +1,8 @@
 ---
+import { Image } from "astro:assets";
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import { projectIcon } from "../../lib/icons";
 import { projectLinks } from "../../lib/links";
 import { site } from "../../lib/site";
 import { ogFor } from "../../lib/og";
@@ -15,6 +17,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const { title, summary, status, tech, year, draft } = entry.data;
+const icon = projectIcon(entry.id);
 ---
 
 <Layout
@@ -25,11 +28,24 @@ const { title, summary, status, tech, year, draft } = entry.data;
 >
   <article class="doc" data-pagefind-body data-pagefind-meta="kind:Project">
     <p class="back" data-pagefind-ignore><a href="/projects">← Projects</a></p>
-    <h1>
-      {title}
-      {status && <span class="status-pill">{status}</span>}
-      {draft && <span class="draft-pill">Draft</span>}
-    </h1>
+    <div class="title-row">
+      {icon && (
+        <Image
+          class="title-icon"
+          src={icon}
+          alt=""
+          width={48}
+          height={48}
+          densities={[1, 2]}
+          loading="eager"
+        />
+      )}
+      <h1>
+        {title}
+        {status && <span class="status-pill">{status}</span>}
+        {draft && <span class="draft-pill">Draft</span>}
+      </h1>
+    </div>
     <p class="lead">{summary}</p>
 
     <dl class="facts" data-pagefind-ignore>
@@ -67,6 +83,23 @@ const { title, summary, status, tech, year, draft } = entry.data;
   .back {
     margin: 0 0 1rem;
     font-size: 0.9rem;
+  }
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .title-icon {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    /* The source icons round their own corners; see index.astro. */
+  }
+  /* The global .doc h1 carries a top margin that would push the heading off
+     the icon's centre line. */
+  .title-row h1 {
+    margin-top: 0;
+    margin-bottom: 0;
   }
   .facts {
     display: grid;

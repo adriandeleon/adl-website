@@ -1,6 +1,8 @@
 ---
+import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 import { projects } from "../../lib/content";
+import { projectIcon } from "../../lib/icons";
 import { projectLinks } from "../../lib/links";
 import { site } from "../../lib/site";
 
@@ -23,6 +25,16 @@ const all = await projects();
         all.map((p) => (
           <li class="card">
             <div class="card-head">
+              {projectIcon(p.id) && (
+                <Image
+                  class="card-icon"
+                  src={projectIcon(p.id)!}
+                  alt=""
+                  width={28}
+                  height={28}
+                  densities={[1, 2]}
+                />
+              )}
               <a href={`/projects/${p.id}`} class="card-title">
                 {p.data.title}
               </a>
@@ -81,6 +93,12 @@ const all = await projects();
     align-items: center;
     flex-wrap: wrap;
     gap: 0.5rem;
+  }
+  .card-icon {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    /* The source icons round their own corners; see index.astro. */
   }
   .card-title {
     font-size: 1.1rem;
