@@ -1,0 +1,138 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { posts, projects, shortDate } from "../lib/content";
+import { site, socials } from "../lib/site";
+
+// The home page is a shop window, not an archive: a few of each, with a link
+// to the full list. Change the slice sizes and that's the whole knob.
+const recentPosts = (await posts()).slice(0, 5);
+const topProjects = (await projects()).slice(0, 4);
+---
+
+<Layout>
+  <main class="doc">
+    <section class="hero">
+      <h1>{site.name}</h1>
+      <p class="lead">{site.tagline}</p>
+      <p class="hero-links">
+        {
+          socials.map((s) => (
+            <a
+              href={s.href}
+              target={s.href.startsWith("http") ? "_blank" : undefined}
+              rel={s.href.startsWith("http") ? "noopener noreferrer" : undefined}
+            >
+              {s.label}
+            </a>
+          ))
+        }
+      </p>
+    </section>
+
+    {
+      topProjects.length > 0 && (
+        <section>
+          <div class="section-head">
+            <h2>Projects</h2>
+            <a href="/projects">All projects →</a>
+          </div>
+          <ul class="list">
+            {topProjects.map((p) => (
+              <li>
+                <a href={`/projects/${p.id}`} class="item-title">
+                  {p.data.title}
+                </a>
+                {p.data.status && <span class="status-pill">{p.data.status}</span>}
+                <p class="item-desc">{p.data.summary}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      recentPosts.length > 0 && (
+        <section>
+          <div class="section-head">
+            <h2>Writing</h2>
+            <a href="/blog">All posts →</a>
+          </div>
+          <ul class="list">
+            {recentPosts.map((p) => (
+              <li>
+                <a href={`/blog/${p.id}`} class="item-title">
+                  {p.data.title}
+                </a>
+                <p class="item-desc">
+                  <span class="date">{shortDate(p.data.date)}</span>
+                  {p.data.description && <span> — {p.data.description}</span>}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </main>
+</Layout>
+
+<style>
+  .hero {
+    padding: 2rem 0 1rem;
+  }
+  .hero h1 {
+    margin-bottom: 0.3rem;
+  }
+  .lead {
+    color: var(--muted);
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  .hero-links {
+    display: flex;
+    gap: 1.2rem;
+    margin: 1.2rem 0 0;
+    font-size: 0.9rem;
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border-soft);
+    margin-top: 3rem;
+  }
+  .section-head h2 {
+    margin: 0 0 0.6rem;
+    border: 0;
+  }
+  .section-head a {
+    font-size: 0.85rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .list li {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .item-title {
+    font-weight: 700;
+    color: var(--text);
+  }
+  .item-desc {
+    color: var(--muted);
+    margin: 0.3rem 0 0;
+    font-size: 0.92rem;
+  }
+  .date {
+    color: var(--faint);
+    font-family: var(--mono);
+    font-size: 0.85em;
+  }
+</style>

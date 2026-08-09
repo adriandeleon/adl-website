@@ -1,0 +1,50 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { longDate } from "../../lib/content";
+import { ogFor } from "../../lib/og";
+import { site } from "../../lib/site";
+
+export async function getStaticPaths() {
+  // Deliberately unfiltered: a draft still gets a page so you can preview it
+  // at its real URL. It's the *listings* that hide it, and the noindex below
+  // that keeps it out of search results.
+  const all = await getCollection("blog");
+  return all.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Layout
+  title={`${entry.data.title} — ${site.name}`}
+  description={entry.data.description ?? entry.data.title}
+  ogImage={ogFor("blog", entry.id)}
+  noindex={entry.data.draft}
+>
+  <article class="doc" data-pagefind-body data-pagefind-meta="kind:Blog">
+    <p class="back" data-pagefind-ignore><a href="/blog">← Blog</a></p>
+    <h1>
+      {entry.data.title}
+      {entry.data.draft && <span class="draft-pill">Draft</span>}
+    </h1>
+    <p class="meta">
+      {longDate(entry.data.date)}
+      {entry.data.tags.length > 0 && <span> · {entry.data.tags.join(", ")}</span>}
+    </p>
+    <Content />
+  </article>
+</Layout>
+
+<style>
+  .back {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+  }
+  .meta {
+    color: var(--faint);
+    font-size: 0.9rem;
+    margin: 0 0 2rem;
+  }
+</style>

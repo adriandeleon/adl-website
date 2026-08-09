@@ -1,0 +1,662 @@
+---
+import { site, nav, socials } from "../lib/site";
+import SiteSearch from "../components/SiteSearch.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Social-card image, relative to the site root (e.g. "og/blog.png").
+      Falls back to the shared card when a page has none. */
+  ogImage?: string;
+  /** Overrides the self-referencing canonical. Rarely needed — set it only
+      when two URLs render the same content and you want one to win. */
+  canonicalPath?: string;
+  /** Keeps the page out of search results. Set for drafts: they still build
+      and are reachable by URL for previewing, but shouldn't be indexed. */
+  noindex?: boolean;
+}
+
+const {
+  title = `${site.name} — ${site.tagline}`,
+  description = site.description,
+  ogImage,
+  canonicalPath,
+  noindex = false,
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const url = (p: string) => `${base}/${p}`.replace(/\/{2,}/g, "/");
+
+// Absolute URLs for SEO/social tags (Astro.site is set in astro.config).
+// Normalize the trailing slash: the build emits directory URLs, so a canonical
+// written by hand as "/blog/my-post" must not disagree with the page's own
+// "/blog/my-post/" — search engines treat those as two URLs, which defeats the
+// point of declaring a canonical at all.
+const withSlash = (p: string) => (p.endsWith("/") ? p : `${p}/`);
+const canonical = new URL(withSlash(canonicalPath ?? Astro.url.pathname), Astro.site).href;
+const ogImageUrl = new URL(ogImage ?? "/og-image.png", Astro.site).href;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  description: site.tagline,
+  url: site.url,
+  sameAs: socials.filter((s) => s.href.startsWith("http")).map((s) => s.href),
+};
+
+// Highlight the active top-level page.
+const path = Astro.url.pathname.replace(/\/$/, "");
+const isActive = (href: string) => {
+  const h = href.replace(/\/$/, "");
+  if (h === url("").replace(/\/$/, "")) return path === h;
+  return path.startsWith(h) && h.startsWith(base);
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:site_name" content={site.name} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <link rel="icon" type="image/svg+xml" href={url("favicon.svg")} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${site.name} — Blog`}
+      href={url("blog/rss.xml")}
+    />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(jsonLd)}
+    />
+    <script is:inline>
+      // Apply the chosen theme before paint to avoid a flash of the default.
+      // Precedence: saved choice → OS light/dark → dark default.
+      (function () {
+        try {
+          var t = localStorage.getItem("site-theme");
+          if (!t) {
+            var light =
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: light)").matches;
+            t = light ? "light" : "dark";
+          }
+          if (t === "light") document.documentElement.dataset.theme = "light";
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header class="site-nav">
+      <div class="nav-inner">
+        <a class="brand" href={url("")}>
+          <span class="monogram" aria-hidden="true">ADL</span>
+          <span>{site.name}</span>
+        </a>
+        <nav class="nav-links">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                class={isActive(item.href) ? "active" : ""}
+                target={item.external ? "_blank" : undefined}
+                rel={item.external ? "noopener noreferrer" : undefined}
+              >
+                {item.label}
+                {item.external && (
+                  <svg
+                    class="ext-icon"
+                    viewBox="0 0 24 24"
+                    width="11"
+                    height="11"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M14 4h6v6" />
+                    <path d="M20 4 11 13" />
+                    <path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5" />
+                  </svg>
+                )}
+              </a>
+            ))
+          }
+          <SiteSearch />
+          <label class="theme-picker" title="Theme">
+            <span class="sr-only">Theme</span>
+            <select id="theme-select" aria-label="Theme">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </label>
+        </nav>
+      </div>
+    </header>
+
+    <script is:inline>
+      // Sync the picker with the active theme and persist changes.
+      (function () {
+        var sel = document.getElementById("theme-select");
+        if (!sel) return;
+        var current = document.documentElement.dataset.theme || "dark";
+        sel.value = current;
+        sel.addEventListener("change", function () {
+          var t = sel.value;
+          if (t === "dark") delete document.documentElement.dataset.theme;
+          else document.documentElement.dataset.theme = t;
+          try {
+            localStorage.setItem("site-theme", t);
+          } catch (e) {}
+        });
+      })();
+    </script>
+
+    <div id="content" tabindex="-1">
+      <slot />
+    </div>
+
+    <footer class="footer">
+      <div class="footer-cols">
+        <div class="footer-brand">
+          <a class="brand" href={url("")}>
+            <span class="monogram" aria-hidden="true">ADL</span>
+            <span>{site.name}</span>
+          </a>
+          <p class="footer-tag">{site.tagline}</p>
+        </div>
+        <nav class="footer-col">
+          <h3>Site</h3>
+          <a href={url("projects")}>Projects</a>
+          <a href={url("blog")}>Blog</a>
+          <a href={url("blog/rss.xml")}>RSS</a>
+        </nav>
+        <nav class="footer-col">
+          <h3>Elsewhere</h3>
+          {socials.map((s) => <a href={s.href}>{s.label}</a>)}
+        </nav>
+      </div>
+      <p class="footer-base">
+        © {new Date().getFullYear()} {site.name}.
+      </p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    /* Dark default: the GitHub-dark ("Primer Dark") palette. Every colour on
+       the site resolves through these variables, so retheming the whole thing
+       means editing this block and the [data-theme="light"] one below. */
+    --bg: #0d1117; /* .editor-area background */
+    --bg-soft: #161b22; /* line-number gutter background */
+    --border: #30363d;
+    --border-soft: #21262d; /* minimap border */
+    --text: #c9d1d9; /* .editor-area .text fill */
+    --muted: #8b949e; /* comment fill */
+    --faint: #6e7681; /* line-number text */
+    --accent: #58a6ff; /* link / fold-chevron:hover */
+    --accent-soft: rgba(31, 111, 235, 0.12); /* selection #1f6feb */
+    --on-accent: #06101f; /* readable text on an accent fill */
+    --bookmark: #f2a65c; /* bookmark gutter marker */
+
+    /* Syntax token colours, used by the .tok-* helpers for inline code. */
+    --tok-keyword: #ff7b72;
+    --tok-string: #a5d6ff;
+    --tok-comment: #8b949e;
+    --tok-number: #79c0ff;
+    --tok-function: #d2a8ff;
+    --tok-type: #ffa657;
+
+    --radius: 12px;
+    --maxw: 980px;
+    --mono: "JetBrains Mono", "Cascadia Code", "Fira Code", ui-monospace,
+      SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+      Arial, sans-serif;
+  }
+
+  /* :root above is the dark default (the GitHub-dark palette), so only the
+     light theme needs an override block. To add another theme: copy this
+     block, change the selector, and add an <option> to the picker above. */
+  [data-theme="light"] {
+    color-scheme: light;
+    --bg: #ffffff;
+    --bg-soft: #f6f8fa;
+    --border: #d0d7de;
+    --border-soft: #eaeef2;
+    --text: #24292f;
+    --muted: #6e7781;
+    --faint: #8c959f;
+    --accent: #0969da;
+    --accent-soft: rgba(9, 105, 218, 0.1);
+    --on-accent: #ffffff;
+    --bookmark: #d29922;
+    --tok-keyword: #cf222e;
+    --tok-string: #0a3069;
+    --tok-comment: #6e7781;
+    --tok-number: #0550ae;
+    --tok-function: #8250df;
+    --tok-type: #953800;
+  }
+
+
+
+
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    /* A long unbroken token (a command id, a path, a URL) in running text used
+       to push the page 25px wider than a 375px phone, so the whole page
+       scrolled sideways. Break those rather than let one word set the width. */
+    overflow-wrap: break-word;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+
+  /* Inline code is the usual offender: ids like `view.toggleSimpleMode` and
+     shell snippets have no spaces to wrap at. */
+  :not(pre) > code {
+    overflow-wrap: anywhere;
+  }
+
+  #content {
+    outline: none;
+  }
+
+  /* Keyboard users otherwise tab through eight nav links, the search trigger
+     and the theme picker on every page before reaching the content. */
+  .skip-link {
+    position: absolute;
+    left: 0.75rem;
+    top: -3rem;
+    z-index: 200;
+    padding: 0.55rem 1rem;
+    border-radius: 0 0 8px 8px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 600;
+    transition: top 0.15s ease;
+  }
+  .skip-link:focus {
+    top: 0;
+    text-decoration: none;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  code,
+  kbd {
+    font-family: var(--mono);
+    font-size: 0.875em;
+  }
+
+  /* Inline code reads like a token on the editor surface. */
+  :not(pre) > code {
+    background: var(--bg-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    padding: 0.1em 0.4em;
+    color: var(--tok-string);
+  }
+
+  kbd {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    padding: 0.1em 0.45em;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* Small status pill: "Draft" on unpublished entries, and the free-text
+     `status:` on a project card. */
+  .draft-pill,
+  .status-pill {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    vertical-align: middle;
+    color: var(--bookmark);
+    background: color-mix(in srgb, var(--bookmark) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--bookmark) 45%, transparent);
+    border-radius: 999px;
+    padding: 0.08rem 0.4rem;
+  }
+
+  .status-pill {
+    margin-left: 0;
+    color: var(--muted);
+    background: var(--bg-soft);
+    border-color: var(--border);
+  }
+
+  /* Syntax tokens for hand-highlighted inline code. */
+  .tok-comment {
+    color: var(--tok-comment);
+    font-style: italic;
+  }
+  .tok-keyword {
+    color: var(--tok-keyword);
+  }
+  .tok-string {
+    color: var(--tok-string);
+  }
+  .tok-flag {
+    color: var(--tok-type);
+  }
+
+  /* --- shared chrome --- */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    /* translucent version of the active theme's background */
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-inner {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: var(--text);
+    font-size: 1.05rem;
+  }
+
+  .brand:hover {
+    text-decoration: none;
+  }
+
+  .brand .monogram {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.15rem 0.5rem;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    /* Eight links, the search trigger and the theme picker have to share the
+       980px bar, so the row is deliberately tight: keep enough slack that a
+       platform with wider font metrics still fits on one line. */
+    gap: 0.5rem 0.85rem;
+    font-size: 0.9rem;
+    min-width: 0;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    /* Without this the trailing external-link icon wraps onto its own line
+       inside the anchor once the bar gets tight, which makes "Discussions" and
+       "GitHub" twice as tall as their neighbours and throws the row out of
+       alignment. Keep each label and its icon together and let the row wrap
+       between items instead. */
+    white-space: nowrap;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-links a .ext-icon {
+    margin-left: 0.2rem;
+    vertical-align: -1px;
+    opacity: 0.6;
+  }
+
+  .nav-links a:hover .ext-icon {
+    opacity: 1;
+  }
+
+  .theme-picker select {
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    color: var(--text);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.3rem 1.9rem 0.3rem 0.8rem;
+    cursor: pointer;
+    /* chevron drawn with the theme's muted color */
+    background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+      linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position:
+      right 0.95rem center,
+      right 0.65rem center;
+    background-size:
+      5px 5px,
+      5px 5px;
+    background-repeat: no-repeat;
+  }
+
+  .theme-picker select:hover {
+    border-color: var(--accent);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .footer {
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .footer-cols {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 3rem 1.25rem 2rem;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .footer-tag {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0.75rem 0 0;
+    max-width: 18rem;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .footer-col h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+    margin: 0 0 0.25rem;
+  }
+
+  .footer-col a {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .footer-col a:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .footer-base {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 1.25rem;
+    border-top: 1px solid var(--border-soft);
+    color: var(--faint);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  /* Shared docs/prose pages */
+  .doc {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 2rem;
+  }
+  .doc h1 {
+    font-size: 2.4rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .doc .lead {
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin: 0 0 2.5rem;
+  }
+  .doc h2 {
+    font-size: 1.4rem;
+    margin: 2.5rem 0 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .doc h3 {
+    font-size: 1.1rem;
+    margin: 1.75rem 0 0.5rem;
+  }
+  .doc p,
+  .doc li {
+    color: var(--muted);
+  }
+  .doc p {
+    margin: 0.75rem 0;
+  }
+  .doc ul {
+    padding-left: 1.25rem;
+  }
+  .doc li {
+    margin: 0.4rem 0;
+  }
+  .doc strong {
+    color: var(--text);
+  }
+  .doc pre {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    line-height: 1.6;
+  }
+  .doc pre code {
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+  .doc table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.92rem;
+  }
+  .doc th,
+  .doc td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+  .doc th {
+    color: var(--text);
+    border-bottom-color: var(--border);
+  }
+  .doc td {
+    color: var(--muted);
+  }
+
+  @media (max-width: 700px) {
+    .footer-cols {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .nav-links {
+      gap: 0.9rem;
+      font-size: 0.85rem;
+    }
+    .brand span:not(.monogram) {
+      display: none;
+    }
+  }
+</style>

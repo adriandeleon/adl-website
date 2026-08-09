@@ -1,0 +1,111 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { projects } from "../../lib/content";
+import { site } from "../../lib/site";
+
+const all = await projects();
+---
+
+<Layout
+  title={`Projects — ${site.name}`}
+  description="Things I've built — desktop tools, libraries, and side projects."
+  ogImage="og/projects.png"
+>
+  <main class="doc">
+    <h1>Projects</h1>
+    <p class="lead">Things I've built, and what I learned building them.</p>
+
+    {all.length === 0 && <p class="empty">Nothing here yet.</p>}
+
+    <ul class="grid">
+      {
+        all.map((p) => (
+          <li class="card">
+            <div class="card-head">
+              <a href={`/projects/${p.id}`} class="card-title">
+                {p.data.title}
+              </a>
+              {p.data.status && <span class="status-pill">{p.data.status}</span>}
+              {p.data.draft && <span class="draft-pill">Draft</span>}
+            </div>
+            <p class="card-summary">{p.data.summary}</p>
+            {p.data.tech.length > 0 && (
+              <p class="card-tech">{p.data.tech.join(" · ")}</p>
+            )}
+            <p class="card-links">
+              <a href={`/projects/${p.id}`}>Details</a>
+              {p.data.repo && (
+                <a href={p.data.repo} target="_blank" rel="noopener noreferrer">
+                  Source
+                </a>
+              )}
+              {p.data.url && (
+                <a href={p.data.url} target="_blank" rel="noopener noreferrer">
+                  Website
+                </a>
+              )}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</Layout>
+
+<style>
+  .lead {
+    color: var(--muted);
+    margin: 0.5rem 0 2.5rem;
+  }
+  .empty {
+    color: var(--faint);
+  }
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    /* auto-fit + minmax means the column count follows the viewport with no
+       media query, and a single card still fills the row instead of hugging
+       the left edge at 300px wide. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 1rem;
+  }
+  .card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+    padding: 1.1rem 1.2rem;
+  }
+  .card:hover {
+    border-color: var(--accent);
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .card-summary {
+    color: var(--muted);
+    margin: 0.6rem 0 0;
+    font-size: 0.95rem;
+  }
+  .card-tech {
+    color: var(--faint);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    margin: 0.7rem 0 0;
+  }
+  .card-links {
+    display: flex;
+    gap: 1rem;
+    margin: 0.9rem 0 0;
+    font-size: 0.85rem;
+  }
+</style>

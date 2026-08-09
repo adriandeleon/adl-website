@@ -1,0 +1,92 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { site } from "../../lib/site";
+import { ogFor } from "../../lib/og";
+
+export async function getStaticPaths() {
+  // Unfiltered for the same reason as the blog: a draft is previewable at its
+  // URL, just unlisted and noindexed.
+  const all = await getCollection("projects");
+  return all.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, summary, status, tech, repo, url, year, draft } = entry.data;
+---
+
+<Layout
+  title={`${title} — ${site.name}`}
+  description={summary}
+  ogImage={ogFor("project", entry.id)}
+  noindex={draft}
+>
+  <article class="doc" data-pagefind-body data-pagefind-meta="kind:Project">
+    <p class="back" data-pagefind-ignore><a href="/projects">← Projects</a></p>
+    <h1>
+      {title}
+      {status && <span class="status-pill">{status}</span>}
+      {draft && <span class="draft-pill">Draft</span>}
+    </h1>
+    <p class="lead">{summary}</p>
+
+    <dl class="facts" data-pagefind-ignore>
+      {year && (
+        <>
+          <dt>Year</dt>
+          <dd>{year}</dd>
+        </>
+      )}
+      {tech.length > 0 && (
+        <>
+          <dt>Built with</dt>
+          <dd>{tech.join(", ")}</dd>
+        </>
+      )}
+      {repo && (
+        <>
+          <dt>Source</dt>
+          <dd>
+            <a href={repo} target="_blank" rel="noopener noreferrer">{repo.replace(/^https?:\/\//, "")}</a>
+          </dd>
+        </>
+      )}
+      {url && (
+        <>
+          <dt>Website</dt>
+          <dd>
+            <a href={url} target="_blank" rel="noopener noreferrer">{url.replace(/^https?:\/\//, "")}</a>
+          </dd>
+        </>
+      )}
+    </dl>
+
+    <Content />
+  </article>
+</Layout>
+
+<style>
+  .back {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.4rem 1.2rem;
+    margin: 0 0 2.5rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+    font-size: 0.9rem;
+  }
+  .facts dt {
+    color: var(--faint);
+  }
+  .facts dd {
+    margin: 0;
+    color: var(--muted);
+  }
+</style>
