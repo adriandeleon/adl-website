@@ -5,6 +5,7 @@ order: 30
 status: "Active"
 tech: ["Java 25", "JavaFX 26", "Maven"]
 repo: "https://github.com/adriandeleon/nux"
+url: "https://github.com/adriandeleon/nux"
 year: "2026"
 ---
 

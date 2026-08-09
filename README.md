@@ -69,6 +69,12 @@ The long version.
 
 `title` and `summary` are required. Lower `order` sorts first.
 
+When a project has no site of its own, set `url` to the repo as well, so the
+field is never blank. Identical URLs are deduplicated, so the card and the
+fact table show a single link labelled **Source** rather than the same address
+twice under two labels — see `src/lib/links.ts` if you'd rather it read
+differently.
+
 ## Drafts
 
 `draft: true` on a post or project means: kept out of the listing, the RSS feed

@@ -30,7 +30,9 @@ const projects = defineCollection({
     // Free text, shown as a pill: "Active", "Shipped", "Archived", whatever.
     status: z.string().optional(),
     tech: z.array(z.string()).default([]),
-    // Both optional — a project with neither just renders no links.
+    // Both optional. Convention: when a project has no site of its own, set
+    // `url` to the repo too, so the field is never blank. The templates dedupe
+    // identical URLs (src/lib/links.ts), so that renders one link, not two.
     repo: z.string().optional(),
     url: z.string().optional(),
     year: z.string().optional(),

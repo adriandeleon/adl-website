@@ -2,9 +2,10 @@
 title: "Modula"
 summary: "A broadcast radio receiver for RTL-SDR dongles. Commercial AM and FM, in stereo, with RDS — a radio, not an SDR panel."
 order: 20
-status: "Complete"
+status: "Active"
 tech: ["Java 25", "JavaFX 26", "RTL-SDR"]
 repo: "https://github.com/adriandeleon/Modula"
+url: "https://github.com/adriandeleon/Modula"
 year: "2026"
 ---
 

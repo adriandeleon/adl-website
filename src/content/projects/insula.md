@@ -5,6 +5,7 @@ order: 10
 status: "Active"
 tech: ["Java 25", "JavaFX 26", "Maven"]
 repo: "https://github.com/adriandeleon/insula"
+url: "https://github.com/adriandeleon/insula"
 year: "2026"
 ---
 

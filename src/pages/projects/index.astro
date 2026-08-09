@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { projects } from "../../lib/content";
+import { projectLinks } from "../../lib/links";
 import { site } from "../../lib/site";
 
 const all = await projects();
@@ -34,16 +35,11 @@ const all = await projects();
             )}
             <p class="card-links">
               <a href={`/projects/${p.id}`}>Details</a>
-              {p.data.repo && (
-                <a href={p.data.repo} target="_blank" rel="noopener noreferrer">
-                  Source
+              {projectLinks(p.data).map((l) => (
+                <a href={l.href} target="_blank" rel="noopener noreferrer">
+                  {l.label}
                 </a>
-              )}
-              {p.data.url && (
-                <a href={p.data.url} target="_blank" rel="noopener noreferrer">
-                  Website
-                </a>
-              )}
+              ))}
             </p>
           </li>
         ))

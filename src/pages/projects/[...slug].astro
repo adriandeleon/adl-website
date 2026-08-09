@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import { projectLinks } from "../../lib/links";
 import { site } from "../../lib/site";
 import { ogFor } from "../../lib/og";
 
@@ -13,7 +14,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, summary, status, tech, repo, url, year, draft } = entry.data;
+const { title, summary, status, tech, year, draft } = entry.data;
 ---
 
 <Layout
@@ -44,22 +45,18 @@ const { title, summary, status, tech, repo, url, year, draft } = entry.data;
           <dd>{tech.join(", ")}</dd>
         </>
       )}
-      {repo && (
-        <>
-          <dt>Source</dt>
-          <dd>
-            <a href={repo} target="_blank" rel="noopener noreferrer">{repo.replace(/^https?:\/\//, "")}</a>
-          </dd>
-        </>
-      )}
-      {url && (
-        <>
-          <dt>Website</dt>
-          <dd>
-            <a href={url} target="_blank" rel="noopener noreferrer">{url.replace(/^https?:\/\//, "")}</a>
-          </dd>
-        </>
-      )}
+      {
+        projectLinks(entry.data).map((l) => (
+          <>
+            <dt>{l.label}</dt>
+            <dd>
+              <a href={l.href} target="_blank" rel="noopener noreferrer">
+                {l.href.replace(/^https?:\/\//, "")}
+              </a>
+            </dd>
+          </>
+        ))
+      }
     </dl>
 
     <Content />
