@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import avatar from "../assets/avatar.jpg";
 import { posts, projects, shortDate } from "../lib/content";
+import { projectIcon } from "../lib/icons";
 import { site, socials } from "../lib/site";
 
 // The home page is a shop window, not an archive: a few of each, with a link
@@ -52,15 +53,27 @@ const topProjects = (await projects()).slice(0, 4);
             <a href="/projects">All projects →</a>
           </div>
           <ul class="list">
-            {topProjects.map((p) => (
-              <li>
-                <a href={`/projects/${p.id}`} class="item-title">
-                  {p.data.title}
-                </a>
-                {p.data.status && <span class="status-pill">{p.data.status}</span>}
-                <p class="item-desc">{p.data.summary}</p>
-              </li>
-            ))}
+            {topProjects.map((p) => {
+              const icon = projectIcon(p.id);
+              return (
+                <li class="project-row">
+                  {icon ? (
+                    <Image class="project-icon" src={icon} alt="" width={32} height={32} densities={[1, 2]} />
+                  ) : (
+                    /* Keeps the text column aligned when a project has no
+                       icon, instead of letting that row shift left. */
+                    <span class="project-icon" aria-hidden="true" />
+                  )}
+                  <div class="project-body">
+                    <a href={`/projects/${p.id}`} class="item-title">
+                      {p.data.title}
+                    </a>
+                    {p.data.status && <span class="status-pill">{p.data.status}</span>}
+                    <p class="item-desc">{p.data.summary}</p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </section>
       )
@@ -163,6 +176,24 @@ const topProjects = (await projects()).slice(0, 4);
   .list li {
     padding: 1rem 0;
     border-bottom: 1px solid var(--border-soft);
+  }
+  .project-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+  .project-icon {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    /* No border-radius: every icon already rounds its own corners against a
+       transparent surround, so clipping again just shaves them. */
+    /* Nudge down so the icon's optical centre lines up with the title's
+       cap height rather than its line box. */
+    margin-top: 0.15rem;
+  }
+  .project-body {
+    min-width: 0;
   }
   .item-title {
     font-weight: 700;
