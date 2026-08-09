@@ -1,5 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
+import avatar from "../assets/avatar.jpg";
 import { posts, projects, shortDate } from "../lib/content";
 import { site, socials } from "../lib/site";
 
@@ -12,9 +14,21 @@ const topProjects = (await projects()).slice(0, 4);
 <Layout>
   <main class="doc">
     <section class="hero">
-      <h1>{site.name}</h1>
-      <p class="lead">{site.tagline}</p>
-      <p class="hero-links">
+      {/* Decorative: the name it sits beside is already text, so announcing
+          the portrait too would just repeat it to a screen reader. */}
+      <Image
+        class="avatar"
+        src={avatar}
+        alt=""
+        width={128}
+        height={128}
+        densities={[1, 2]}
+        loading="eager"
+      />
+      <div class="hero-text">
+        <h1>{site.name}</h1>
+        <p class="lead">{site.tagline}</p>
+        <p class="hero-links">
         {
           socials.map((s) => (
             <a
@@ -26,7 +40,8 @@ const topProjects = (await projects()).slice(0, 4);
             </a>
           ))
         }
-      </p>
+        </p>
+      </div>
     </section>
 
     {
@@ -79,10 +94,38 @@ const topProjects = (await projects()).slice(0, 4);
 
 <style>
   .hero {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
     padding: 2rem 0 1rem;
   }
+  .avatar {
+    flex: none;
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+  }
+  .hero-text {
+    min-width: 0;
+  }
   .hero h1 {
+    margin-top: 0;
     margin-bottom: 0.3rem;
+  }
+  /* Stack on narrow screens: side by side leaves the tagline about twelve
+     characters wide on a phone. */
+  @media (max-width: 560px) {
+    .hero {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.1rem;
+    }
+    .avatar {
+      width: 96px;
+      height: 96px;
+    }
   }
   .lead {
     color: var(--muted);
