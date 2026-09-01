@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://adeleon.dev/sitemap-index.xml
+Sitemap: https://www.adeleon.dev/sitemap-index.xml

@@ -7,7 +7,7 @@ Day to day you only touch Markdown files in `src/content/`.
 
 ## Deployment
 
-The canonical URL is `https://adeleon.dev`. It is configured in
+The canonical URL is `https://www.adeleon.dev`. It is configured in
 `src/lib/site.ts`, `public/CNAME`, and `public/robots.txt`; keep those values in
 sync if the domain changes.
 

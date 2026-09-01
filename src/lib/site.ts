@@ -14,7 +14,7 @@ export const site = {
     "Personal site of Adrián De León — software, open source projects, and occasional writing.",
   // This feeds Astro's `site` (absolute URLs in the sitemap and RSS feed), so
   // a wrong value here silently ships wrong links in both.
-  url: "https://adeleon.dev",
+  url: "https://www.adeleon.dev",
   author: "Adrián De León",
 };
 
