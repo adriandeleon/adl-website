@@ -2,24 +2,30 @@
 // Changing your name, tagline, domain or social links is a one-file edit.
 
 export const site = {
-  name: "Adrian De Leon",
-  // Shown under the name on the home page and in the footer.
-  tagline: "Software engineer. I build desktop tools and write about it.",
+  name: "Adrián De León",
+  // Shown directly under the name on the home page.
+  expertise: "Software Engineer · Java · Linux · Open Source",
+  // Shown in the home-page introduction and footer.
+  tagline:
+    "By day, I'm a Backend Java Developer, by night, I mostly build keyboard-first, desktop software and occasionally write about it.",
   // Used for <meta description> and the RSS feed description when a page
   // doesn't supply its own.
   description:
-    "Personal site of Adrian De Leon — notes on building software, and the projects I work on.",
-  // TODO: set your real domain, then update public/CNAME to match.
+    "Personal site of Adrián De León — software, open source projects, and occasional writing.",
   // This feeds Astro's `site` (absolute URLs in the sitemap and RSS feed), so
   // a wrong value here silently ships wrong links in both.
-  url: "https://adriandeleon.dev",
-  author: "Adrian De Leon",
+  url: "https://adeleon.dev",
+  author: "Adrián De León",
 };
 
 // Footer / home-page links. Drop or add freely — nothing iterates these by
 // index, and an empty list just renders nothing.
 export const socials = [
   { href: "https://github.com/adriandeleon", label: "GitHub" },
+  {
+    href: "https://www.linkedin.com/in/adriandeleonsaldivar/",
+    label: "LinkedIn",
+  },
   { href: "mailto:adrian.deleon@gmail.com", label: "Email" },
 ];
 

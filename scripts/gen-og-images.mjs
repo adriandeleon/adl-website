@@ -40,7 +40,7 @@ const C = {
 const siteTs = readFileSync(join(root, "src/lib/site.ts"), "utf8");
 const field = (name, fallback) =>
   siteTs.match(new RegExp(`${name}:\\s*"([^"]*)"`))?.[1] ?? fallback;
-const NAME = field("name", "Adrian De Leon");
+const NAME = field("name", "Adrián De León");
 const MONOGRAM = NAME.split(/\s+/).map((w) => w[0]).join("").slice(0, 3).toUpperCase();
 const DOMAIN = field("url", "https://example.com").replace(/^https?:\/\//, "").replace(/\/$/, "");
 

@@ -1,32 +1,54 @@
 ---
 title: "Editora"
-summary: "A keyboard-driven, cross-platform programmer's text editor. Every action is a command, reachable by your choice of keymap or a fuzzy palette."
+summary: "A keyboard-driven, cross-platform programmer's editor with IDE capabilities that stay out of the way until you need them."
 order: 0
 status: "Active"
-tech: ["Java 25", "JavaFX", "Maven"]
+tech: ["Java 25", "JavaFX 26", "RichTextFX", "Maven"]
 repo: "https://github.com/adriandeleon/Editora"
 url: "https://editora-project.dev"
 year: "2025–"
 ---
 
-A placeholder entry, filled in with a real project so you can see the shape.
-Everything above the `---` drives the card on `/projects/`; everything below it
-is this page.
+Editora is a keyboard-driven programmer's editor built around a simple goal:
+IDE power at text-editor speed. It starts as a focused native editor, then
+brings in code intelligence, debugging, Git, previews, and other heavier tools
+only when the work calls for them.
 
-Editora is built around a single idea: every action is a registered command
-first, and the UI is a view onto that registry. Keybindings, the palette, the
-toolbar and plugins all dispatch through the same place, so a feature is
-discoverable the day it lands.
+## One command system
 
-## Frontmatter
+Every action in Editora is a registered command. The menu bar, toolbar,
+keybindings, command palette, and plugins all dispatch through that same
+system, which keeps features consistent and discoverable.
 
-`title` and `summary` are required — the summary is the card text, so keep it
-to a sentence or two. The rest are optional:
+Search Everywhere provides a single fuzzy interface for commands, project
+files, and symbols. Keymaps can follow Emacs, CUA, Sublime Text, VS Code, or
+IntelliJ conventions, and shortcuts—including multi-key chords—can be
+reassigned.
 
-- `order` — lower sorts first on the index page. Ties break by title.
-- `status` — free text, shown as a pill. "Active", "Shipped", "Archived".
-- `tech` — a list, shown under the summary.
-- `repo` / `url` — either, both, or neither.
-- `year` — free text, so "2025–" and "2019" both work.
-- `draft` — same behaviour as a blog draft: unlisted, noindexed, still
-  previewable at its URL.
+## An editor that scales with the task
+
+Four interface modes—Zen, Expert, Simple, and Full—let the workspace range
+from a distraction-free buffer to a complete development environment. The
+editor includes syntax highlighting across common languages and formats,
+multiple cursors, split editor groups, snippets, EditorConfig support, project
+navigation, and a dedicated log viewer.
+
+## IDE capabilities without bundling the world
+
+Editora integrates with language servers for completion, diagnostics,
+navigation, refactoring, formatting, and code actions. When no language server
+is available, a built-in symbol scanner keeps navigation useful across many
+popular languages.
+
+Run configurations, build-tool tasks, and debugger support sit alongside a
+native Git workflow with diffs, history, blame, stashes, and GitHub pull-request
+reviews. Remote projects can be opened over SSH and SFTP. External language
+servers, debuggers, and command-line tools are detected rather than bundled,
+keeping the core application lean.
+
+## More than source code
+
+Editora previews Markdown—including LaTeX and Mermaid—along with HTML,
+Graphviz, PlantUML, structured data, and configuration files. Its plugin system
+can add commands, views, themes, languages, and integrations, while optional AI
+and agent-protocol support remains opt-in.

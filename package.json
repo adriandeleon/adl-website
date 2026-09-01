@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/gen-og-images.mjs && astro build",
+    "check": "tsc --noEmit && node scripts/validate-site.mjs",
+    "validate": "npm run build && npm run check",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -17,6 +19,7 @@
   "devDependencies": {
     "astro-pagefind": "^2.0.1",
     "pagefind": "^1.5.2",
-    "sharp": "^0.34.2"
+    "sharp": "^0.34.2",
+    "typescript": "^5.9.3"
   }
 }

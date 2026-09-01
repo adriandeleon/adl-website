@@ -9,7 +9,7 @@ import { site, socials } from "../lib/site";
 // The home page is a shop window, not an archive: a few of each, with a link
 // to the full list. Change the slice sizes and that's the whole knob.
 const recentPosts = (await posts()).slice(0, 5);
-const topProjects = (await projects()).slice(0, 4);
+const topProjects = (await projects()).slice(0, 6);
 ---
 
 <Layout>
@@ -28,6 +28,7 @@ const topProjects = (await projects()).slice(0, 4);
       />
       <div class="hero-text">
         <h1>{site.name}</h1>
+        <p class="expertise">{site.expertise}</p>
         <p class="lead">{site.tagline}</p>
         <p class="hero-links">
         {
@@ -143,6 +144,12 @@ const topProjects = (await projects()).slice(0, 4);
   .lead {
     color: var(--muted);
     font-size: 1.1rem;
+    margin: 0.35rem 0 0;
+  }
+  .expertise {
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.85rem;
     margin: 0;
   }
   .hero-links {

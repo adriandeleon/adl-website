@@ -23,6 +23,8 @@ jobs:
       - name: Build with Astro
         uses: withastro/action@v6
         # the Astro project is the repo root
+      - name: Validate production output
+        run: npm run check
   deploy:
     needs: build
     runs-on: ubuntu-latest

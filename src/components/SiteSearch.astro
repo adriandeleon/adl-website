@@ -149,35 +149,40 @@ const pagefindPath = `${base}/pagefind/pagefind.js`.replace(/\/{2,}/g, "/");
       active = list.length ? 0 : -1;
       if (!list.length) {
         resultsEl.innerHTML = "";
+        input.removeAttribute("aria-activedescendant");
         return;
       }
       resultsEl.innerHTML = list
         .map((r, i) => {
           const kind = r.kind ? `<span class="sr-kind">${escapeHtml(r.kind)}</span>` : "";
           return (
-            `<a class="sr-item${i === 0 ? " is-active" : ""}" role="option" href="${escapeHtml(r.url)}" data-i="${i}">` +
+            `<a id="search-result-${i}" class="sr-item${i === 0 ? " is-active" : ""}" role="option" aria-selected="${i === 0}" href="${escapeHtml(r.url)}" data-i="${i}">` +
             `<span class="sr-head">${kind}<span class="sr-title">${escapeHtml(r.title)}</span></span>` +
             `<span class="sr-excerpt">${r.excerpt || ""}</span>` +
             `</a>`
           );
         })
         .join("");
+      input.setAttribute("aria-activedescendant", "search-result-0");
       // Mouse selection.
       resultsEl.querySelectorAll(".sr-item").forEach((el) => {
         el.addEventListener("mousemove", () => setActive(+el.dataset.i));
-        el.addEventListener("click", (e) => {
-          // let the anchor navigate; nothing else needed
-        });
+        el.addEventListener("focus", () => setActive(+el.dataset.i));
       });
     }
 
     function setActive(i) {
       if (i < 0 || i >= items.length || i === active) return;
       const nodes = resultsEl.querySelectorAll(".sr-item");
-      if (nodes[active]) nodes[active].classList.remove("is-active");
+      if (nodes[active]) {
+        nodes[active].classList.remove("is-active");
+        nodes[active].setAttribute("aria-selected", "false");
+      }
       active = i;
       if (nodes[active]) {
         nodes[active].classList.add("is-active");
+        nodes[active].setAttribute("aria-selected", "true");
+        input.setAttribute("aria-activedescendant", nodes[active].id);
         nodes[active].scrollIntoView({ block: "nearest" });
       }
     }
@@ -261,6 +266,29 @@ const pagefindPath = `${base}/pagefind/pagefind.js`.replace(/\/{2,}/g, "/");
         closeModal();
         return;
       }
+      // Keep keyboard focus inside the modal. Results join the cycle as they
+      // appear; with no results, Tab simply remains on the search field.
+      if (e.key === "Tab" && !modal.hidden) {
+        const focusable = Array.from(
+          modal.querySelectorAll(
+            'input:not([disabled]), a[href], button:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          ),
+        ).filter((el) => el.offsetParent !== null);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        } else if (!modal.contains(document.activeElement)) {
+          e.preventDefault();
+          first.focus();
+        }
+        return;
+      }
       if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) {
         e.preventDefault();
         modal.hidden ? openModal() : closeModal();
@@ -314,11 +342,8 @@ const pagefindPath = `${base}/pagefind/pagefind.js`.replace(/\/{2,}/g, "/");
     padding: 0.02rem 0.35rem;
   }
 
-  /* The nav bar is capped at --maxw (980px) on every desktop size, and eight
-     links plus the theme picker already fill it: a labelled trigger needs
-     125px the row doesn't have, which pushed the theme picker onto a second
-     line. Keep the trigger a compact icon (the shortcut lives in the tooltip
-     and the modal footer) so the header stays one row. */
+  /* Keep the trigger a compact icon; the shortcut remains in the tooltip and
+     modal footer, and the header stays calm at narrow widths. */
   .search-trigger-label,
   .search-trigger-kbd {
     display: none;

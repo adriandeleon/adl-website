@@ -5,19 +5,14 @@ deployed to GitHub Pages.
 
 Day to day you only touch Markdown files in `src/content/`.
 
-## Before the first deploy
+## Deployment
 
-Two things still point at a placeholder domain:
+The canonical URL is `https://adeleon.dev`. It is configured in
+`src/lib/site.ts`, `public/CNAME`, and `public/robots.txt`; keep those values in
+sync if the domain changes.
 
-1. `src/lib/site.ts` — `site.url` (also your name, tagline and links).
-2. `public/CNAME` and the `Sitemap:` line in `public/robots.txt` — must match.
-
-`site.url` feeds the sitemap and the RSS feed, so a wrong value ships wrong
-absolute links without failing the build.
-
-Then, on GitHub: **Settings → Pages → Source: GitHub Actions**, and point your
-domain's DNS at GitHub Pages. Pushing to `master` deploys
-(`.github/workflows/pages.yml`).
+On GitHub, set **Settings → Pages → Source** to **GitHub Actions**. Pushing to
+`master` deploys the site through `.github/workflows/pages.yml`.
 
 ## Commands
 
@@ -26,6 +21,8 @@ domain's DNS at GitHub Pages. Pushing to `master` deploys
 | `npm install`     | Install dependencies                              |
 | `npm run dev`     | Dev server at `localhost:4321`, live reload       |
 | `npm run build`   | Social cards, then a static build into `dist/`    |
+| `npm run check`   | Type, internal-link, and accessibility checks     |
+| `npm run validate` | Production build followed by all checks          |
 | `npm run preview` | Serve `dist/` locally, as it will be deployed     |
 
 ## Writing a post
