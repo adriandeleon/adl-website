@@ -1,4 +1,5 @@
 import type { ImageMetadata } from "astro";
+import capsulaNewHost from "../assets/projects/capsula-new-host.png";
 import calculaFunctions from "../assets/projects/calcula-functions.png";
 import editoraWelcome from "../assets/projects/editora-welcome.png";
 import insulaCatalog from "../assets/projects/insula-catalog.png";
@@ -11,6 +12,10 @@ interface ProjectScreenshot {
 }
 
 const screenshots: Record<string, ProjectScreenshot> = {
+  capsula: {
+    src: capsulaNewHost,
+    alt: "Capsula's keyboard-driven new-host form showing fields for an SSH alias, hostname, user, port, identity file, and proxy jump.",
+  },
   calcula: {
     src: calculaFunctions,
     alt: "The Calcula workspace showing typeset symbolic expressions, interactive plots, the calculation trail, and the function browser.",
