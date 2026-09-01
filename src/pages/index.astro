@@ -6,10 +6,10 @@ import { posts, projects, shortDate } from "../lib/content";
 import { projectIcon } from "../lib/icons";
 import { site, socials } from "../lib/site";
 
-// The home page is a shop window, not an archive: a few of each, with a link
-// to the full list. Change the slice sizes and that's the whole knob.
+// Writing stays concise on the home page; projects are the portfolio, so show
+// the complete ordered list here as well as on the projects page.
 const recentPosts = (await posts()).slice(0, 5);
-const topProjects = (await projects()).slice(0, 6);
+const topProjects = await projects();
 ---
 
 <Layout>

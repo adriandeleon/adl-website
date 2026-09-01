@@ -5,6 +5,7 @@ import editoraWelcome from "../assets/projects/editora-welcome.png";
 import insulaCatalog from "../assets/projects/insula-catalog.png";
 import modulaRadio from "../assets/projects/modula-radio.png";
 import nuxDashboard from "../assets/projects/nux-dashboard.png";
+import terminaTerminal from "../assets/projects/termina-terminal.png";
 
 interface ProjectScreenshot {
   src: ImageMetadata;
@@ -35,6 +36,10 @@ const screenshots: Record<string, ProjectScreenshot> = {
   nux: {
     src: nuxDashboard,
     alt: "The Nux UPS dashboard showing battery charge, load, runtime, voltage history, and device variables.",
+  },
+  termina: {
+    src: terminaTerminal,
+    alt: "The Termina terminal emulator showing two tabs and a colorized directory listing in a shell session.",
   },
 };
 
