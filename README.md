@@ -16,14 +16,14 @@ On GitHub, set **Settings → Pages → Source** to **GitHub Actions**. Pushing 
 
 ## Commands
 
-| Command           | Does                                              |
-| ----------------- | ------------------------------------------------- |
-| `npm install`     | Install dependencies                              |
-| `npm run dev`     | Dev server at `localhost:4321`, live reload       |
-| `npm run build`   | Social cards, then a static build into `dist/`    |
-| `npm run check`   | Type, internal-link, and accessibility checks     |
-| `npm run validate` | Production build followed by all checks          |
-| `npm run preview` | Serve `dist/` locally, as it will be deployed     |
+| Command            | Does                                              |
+| -----------------  | ------------------------------------------------- |
+| `npm install`      | Install dependencies                              |
+| `npm run dev`      | Dev server at `localhost:4321`, live reload       |
+| `npm run build`    | Social cards, then a static build into `dist/`    |
+| `npm run check`    | Type, internal-link, and accessibility checks     |
+| `npm run validate` | Production build followed by all checks           |
+| `npm run preview`  | Serve `dist/` locally, as it will be deployed     |
 
 ## Writing a post
 
