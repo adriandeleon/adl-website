@@ -2,7 +2,7 @@
 title: "Calcula"
 summary: "A keyboard-driven, Symja-powered symbolic calculator in the spirit of Emacs Calc — a native JavaFX interface for algebra, calculus, typeset mathematics, and interactive plots."
 order: 50
-status: "Active"
+status: "Maintenance"
 tech: ["Java 25", "JavaFX 26", "Symja"]
 repo: "https://github.com/adriandeleon/Calcula"
 url: "https://github.com/adriandeleon/Calcula"

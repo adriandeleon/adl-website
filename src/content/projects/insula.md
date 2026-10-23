@@ -2,7 +2,7 @@
 title: "Insula"
 summary: "A keyboard-first desktop reader for ZIM offline archives — Wikipedia and hundreds more, downloaded once and read forever with no network."
 order: 10
-status: "Active"
+status: "Maintenance"
 tech: ["Java 25", "JavaFX 26", "Maven"]
 repo: "https://github.com/adriandeleon/insula"
 url: "https://github.com/adriandeleon/insula"
