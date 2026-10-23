@@ -3,7 +3,7 @@ title: "Editora"
 summary: "A keyboard-driven, cross-platform programmer's editor with IDE capabilities that stay out of the way until you need them."
 order: 0
 status: "Active"
-tech: ["Java 25", "JavaFX 26", "RichTextFX", "Maven"]
+tech: ["Java 25", "JavaFX 27", "RichTextFX", "Maven"]
 repo: "https://github.com/adriandeleon/Editora"
 url: "https://editora-project.dev"
 year: "2025–"

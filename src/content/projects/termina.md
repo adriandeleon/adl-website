@@ -3,7 +3,7 @@ title: "Termina"
 summary: "A cross-platform terminal emulator built on JavaFX, running a real shell on a real pseudo-terminal and rendering the emulated screen to a canvas."
 order: 5
 status: "Active"
-tech: ["Java 25", "JavaFX", "JediTerm", "pty4j"]
+tech: ["Java 25", "JavaFX 27", "JediTerm", "pty4j"]
 repo: "https://github.com/adriandeleon/Termina"
 url: "https://github.com/adriandeleon/Termina"
 year: "2026–"
