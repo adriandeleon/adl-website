@@ -6,6 +6,7 @@ import insulaCatalog from "../assets/projects/insula-catalog.png";
 import modulaRadio from "../assets/projects/modula-radio.png";
 import nuxDashboard from "../assets/projects/nux-dashboard.png";
 import terminaTerminal from "../assets/projects/termina-terminal.png";
+import torrentaTransfers from "../assets/projects/torrenta-transfers.png";
 
 interface ProjectScreenshot {
   src: ImageMetadata;
@@ -40,6 +41,10 @@ const screenshots: Record<string, ProjectScreenshot> = {
   termina: {
     src: terminaTerminal,
     alt: "The Termina terminal emulator showing two tabs and a colorized directory listing in a shell session.",
+  },
+  torrenta: {
+    src: torrentaTransfers,
+    alt: "The Torrenta transfer list with status, category, and tracker filters, and a detail pane showing a download's pieces, speed graph, and peers.",
   },
 };
 
