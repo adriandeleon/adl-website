@@ -59,7 +59,12 @@ const topProjects = await projects();
               return (
                 <li class="project-row">
                   {icon ? (
-                    <Image class="project-icon" src={icon} alt="" width={32} height={32} densities={[1, 2]} />
+                    /* A second way to the same page as the title, for the
+                       mouse. Hidden from the keyboard and screen readers so
+                       each row is still one link, announced once. */
+                    <a href={`/projects/${p.id}`} class="icon-link" tabindex="-1" aria-hidden="true">
+                      <Image class="project-icon" src={icon} alt="" width={32} height={32} densities={[1, 2]} />
+                    </a>
                   ) : (
                     /* Keeps the text column aligned when a project has no
                        icon, instead of letting that row shift left. */
@@ -198,6 +203,14 @@ const topProjects = await projects();
     /* Nudge down so the icon's optical centre lines up with the title's
        cap height rather than its line box. */
     margin-top: 0.15rem;
+  }
+  .icon-link {
+    flex: none;
+    /* Shrink-wraps the icon; an inline link would add a line box below it. */
+    display: block;
+  }
+  .icon-link .project-icon {
+    display: block;
   }
   .project-body {
     min-width: 0;
