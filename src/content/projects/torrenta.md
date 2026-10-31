@@ -5,7 +5,7 @@ order: 3
 status: "Active"
 tech: ["Java 25", "JavaFX 27", "libtorrent4j", "Maven"]
 repo: "https://github.com/adriandeleon/torrenta"
-url: "https://adriandeleon.github.io/torrenta-website/"
+url: "https://torrenta-project.dev"
 year: "2026"
 ---
 

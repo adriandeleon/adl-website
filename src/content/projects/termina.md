@@ -5,7 +5,7 @@ order: 5
 status: "Active"
 tech: ["Java 25", "JavaFX 27", "JediTerm", "pty4j"]
 repo: "https://github.com/adriandeleon/Termina"
-url: "https://github.com/adriandeleon/Termina"
+url: "https://termina-project.dev"
 year: "2026–"
 ---
 

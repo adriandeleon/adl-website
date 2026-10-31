@@ -1,4 +1,5 @@
 import type { ImageMetadata } from "astro";
+import aguasLevels from "../assets/projects/aguas-levels.png";
 import capsulaNewHost from "../assets/projects/capsula-new-host.png";
 import calculaFunctions from "../assets/projects/calcula-functions.png";
 import editoraWelcome from "../assets/projects/editora-welcome.png";
@@ -14,6 +15,10 @@ interface ProjectScreenshot {
 }
 
 const screenshots: Record<string, ProjectScreenshot> = {
+  aguas: {
+    src: aguasLevels,
+    alt: "The Aguas dam-level page showing total storage across Monterrey's dams, the share of the city's water they supply, and each dam drawn proportionally to its capacity.",
+  },
   capsula: {
     src: capsulaNewHost,
     alt: "Capsula's keyboard-driven new-host form showing fields for an SSH alias, hostname, user, port, identity file, and proxy jump.",
