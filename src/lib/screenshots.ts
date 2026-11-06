@@ -4,7 +4,6 @@ import capsulaNewHost from "../assets/projects/capsula-new-host.png";
 import calculaFunctions from "../assets/projects/calcula-functions.png";
 import editoraWelcome from "../assets/projects/editora-welcome.png";
 import insulaCatalog from "../assets/projects/insula-catalog.png";
-import miradaWindow from "../assets/projects/mirada-window.jpg";
 import modulaRadio from "../assets/projects/modula-radio.png";
 import nuxDashboard from "../assets/projects/nux-dashboard.png";
 import pautaPrinciples from "../assets/projects/pauta-principles.png";
@@ -36,10 +35,6 @@ const screenshots: Record<string, ProjectScreenshot> = {
   insula: {
     src: insulaCatalog,
     alt: "The Insula catalog showing downloadable offline archives with language and category filters.",
-  },
-  mirada: {
-    src: miradaWindow,
-    alt: "Mirada showing a landscape photo, with the properties sidebar open on the right and the thumbnail strip along the bottom.",
   },
   modula: {
     src: modulaRadio,
