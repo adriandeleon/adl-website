@@ -1,7 +1,7 @@
 ---
 title: "Pauta"
 summary: "The adl desktop apps guidelines: UI, UX and platform rules for the family of JavaFX desktop apps, with Editora as the reference implementation and every rule naming the class or file to copy from."
-order: 8
+order: -1
 status: "Active"
 tech: ["Astro Starlight", "Markdown", "Pandoc"]
 repo: "https://github.com/adriandeleon/adl-desktop-apps-guidelines"
