@@ -6,6 +6,7 @@ import editoraWelcome from "../assets/projects/editora-welcome.png";
 import insulaCatalog from "../assets/projects/insula-catalog.png";
 import modulaRadio from "../assets/projects/modula-radio.png";
 import nuxDashboard from "../assets/projects/nux-dashboard.png";
+import pautaPrinciples from "../assets/projects/pauta-principles.png";
 import terminaTerminal from "../assets/projects/termina-terminal.png";
 import torrentaTransfers from "../assets/projects/torrenta-transfers.png";
 
@@ -42,6 +43,10 @@ const screenshots: Record<string, ProjectScreenshot> = {
   nux: {
     src: nuxDashboard,
     alt: "The Nux UPS dashboard showing battery charge, load, runtime, voltage history, and device variables.",
+  },
+  pauta: {
+    src: pautaPrinciples,
+    alt: "The Pauta principles page listing the thirteen rules the guidelines follow from, with the sidebar of guideline pages alongside.",
   },
   termina: {
     src: terminaTerminal,
