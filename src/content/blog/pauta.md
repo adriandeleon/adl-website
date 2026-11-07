@@ -13,13 +13,16 @@ I wanted to build Multi-platform, Keyboard-first, Command
 Palette centered apps that fill my own needs. I'm a Java developer so
 I chose JDK/JavaFX as my App platform. (Bold choice, I know!).
 
-I started with **Editora**, a programmer's text editor, and used it as
-a starting point for the others. There's **Termina**, a terminal
-emulator, and **Torrenta**, a BitTorrent client. **Modula** is a
-software-defined radio receiver, **Mirada** is an image viewer, and
-**Nux** is a UPS monitor that lives in the tray. They all use JavaFX,
-they all have Spanish-ish? names, and they're all the way I want them (Yeay
-Open Source!).
+I started with **Editora**, a programmer's text editor, and I used it
+as a starting point for the others.
+
+ There's **Termina**, a terminal emulator, **Torrenta**, a BitTorrent
+ client. **Modula** is a software-defined radio receiver, **Mirada**
+ is an image viewer, and **Nux** is a UPS monitor that lives in the
+ tray.
+
+They all use JavaFX, they all have Spanish-*ish?* names, and they're
+all the way I want them (Yeay Open Source!).
 
 By the time I got to the fourth app, I'd built the Settings window four
 times. It was supposed to work the same way in each app, but I'd made it a
