@@ -4,83 +4,162 @@ import Layout from "../layouts/Layout.astro";
 import avatar from "../assets/avatar.jpg";
 import { posts, projects, shortDate } from "../lib/content";
 import { projectIcon } from "../lib/icons";
+import { projectScreenshot } from "../lib/screenshots";
 import { site, socials } from "../lib/site";
 
 // Writing stays concise on the home page; projects are the portfolio, so show
-// the complete ordered list here as well as on the projects page.
+// the complete ordered list here as well as on the projects page. The first
+// few get a screenshot card, the rest a compact one, so the page has a
+// visual hierarchy instead of eleven identical rows.
 const recentPosts = (await posts()).slice(0, 5);
-const topProjects = await projects();
+const allProjects = await projects();
+const FEATURED = 3;
+const featured = allProjects.slice(0, FEATURED);
+const rest = allProjects.slice(FEATURED);
+
+const isExternal = (href: string) => href.startsWith("http");
+
+// Small inline glyphs for the hero buttons, keyed by the social's label so
+// adding a link in site.ts without an icon here still renders (just text).
+const glyphs: Record<string, string> = {
+  GitHub:
+    '<path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.35 1.09 2.92.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.56 9.56 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/>',
+  LinkedIn:
+    '<path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45z"/>',
+  Email:
+    '<path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 2.4V18h16V7.4l-8 5.33-8-5.33zM4.9 7l7.1 4.73L19.1 7H4.9z"/>',
+};
 ---
 
 <Layout>
-  <main class="doc">
+  <main class="doc home">
     <section class="hero">
-      {/* Decorative: the name it sits beside is already text, so announcing
-          the portrait too would just repeat it to a screen reader. */}
-      <Image
-        class="avatar"
-        src={avatar}
-        alt=""
-        width={128}
-        height={128}
-        densities={[1, 2]}
-        loading="eager"
-      />
+      <div class="hero-portrait">
+        {/* Decorative: the name it sits beside is already text, so announcing
+            the portrait too would just repeat it to a screen reader. */}
+        <Image
+          class="avatar"
+          src={avatar}
+          alt=""
+          width={144}
+          height={144}
+          densities={[1, 2]}
+          loading="eager"
+        />
+      </div>
       <div class="hero-text">
+        <p class="role">{site.role}</p>
         <h1>{site.name}</h1>
-        <p class="expertise">{site.expertise}</p>
         <p class="lead">{site.tagline}</p>
+        <ul class="skills" aria-label="Skills">
+          {site.skills.map((s) => <li>{s}</li>)}
+        </ul>
         <p class="hero-links">
-        {
-          socials.map((s) => (
-            <a
-              href={s.href}
-              target={s.href.startsWith("http") ? "_blank" : undefined}
-              rel={s.href.startsWith("http") ? "noopener noreferrer" : undefined}
-            >
-              {s.label}
-            </a>
-          ))
-        }
+          {
+            socials.map((s, i) => (
+              <a
+                href={s.href}
+                class:list={["btn", i === 0 && "btn-primary"]}
+                target={isExternal(s.href) ? "_blank" : undefined}
+                rel={isExternal(s.href) ? "noopener noreferrer" : undefined}
+              >
+                {glyphs[s.label] && (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    set:html={glyphs[s.label]}
+                  />
+                )}
+                {s.label}
+              </a>
+            ))
+          }
         </p>
       </div>
     </section>
 
     {
-      topProjects.length > 0 && (
+      allProjects.length > 0 && (
         <section>
           <div class="section-head">
             <h2>Projects</h2>
+            <p class="section-sub">
+              {allProjects.length} things built, mostly keyboard-first desktop
+              apps.
+            </p>
             <a href="/projects">All projects →</a>
           </div>
-          <ul class="list">
-            {topProjects.map((p) => {
+
+          <ul class="featured">
+            {featured.map((p) => {
               const icon = projectIcon(p.id);
+              const shot = projectScreenshot(p.id);
               return (
-                <li class="project-row">
-                  {icon ? (
-                    /* A second way to the same page as the title, for the
-                       mouse. Hidden from the keyboard and screen readers so
-                       each row is still one link, announced once. */
-                    <a href={`/projects/${p.id}`} class="icon-link" tabindex="-1" aria-hidden="true">
-                      <Image class="project-icon" src={icon} alt="" width={32} height={32} densities={[1, 2]} />
-                    </a>
-                  ) : (
-                    /* Keeps the text column aligned when a project has no
-                       icon, instead of letting that row shift left. */
-                    <span class="project-icon" aria-hidden="true" />
+                <li class="feature">
+                  {shot && (
+                    <div class="shot">
+                      <Image
+                        src={shot.src}
+                        alt={shot.alt}
+                        width={640}
+                        height={400}
+                        densities={[1, 2]}
+                        loading="eager"
+                      />
+                    </div>
                   )}
-                  <div class="project-body">
-                    <a href={`/projects/${p.id}`} class="item-title">
-                      {p.data.title}
-                    </a>
-                    {p.data.status && <span class="status-pill">{p.data.status}</span>}
-                    <p class="item-desc">{p.data.summary}</p>
+                  <div class="feature-body">
+                    <div class="feature-head">
+                      {icon && (
+                        <Image class="mini-icon" src={icon} alt="" width={24} height={24} densities={[1, 2]} />
+                      )}
+                      {/* The link's ::after is stretched over the whole
+                          card (see .feature), so the card is one click target
+                          but still a single link to assistive tech. */}
+                      <a href={`/projects/${p.id}`} class="feature-title">
+                        {p.data.title}
+                      </a>
+                      {p.data.status && <span class="status-pill">{p.data.status}</span>}
+                    </div>
+                    <p class="feature-desc">{p.data.summary}</p>
+                    {p.data.tech.length > 0 && (
+                      <p class="tech">{p.data.tech.join(" · ")}</p>
+                    )}
                   </div>
                 </li>
               );
             })}
           </ul>
+
+          {rest.length > 0 && (
+            <ul class="grid">
+              {rest.map((p) => {
+                const icon = projectIcon(p.id);
+                return (
+                  <li class="card">
+                    <div class="card-head">
+                      {icon ? (
+                        <Image class="card-icon" src={icon} alt="" width={32} height={32} densities={[1, 2]} />
+                      ) : (
+                        <span class="card-icon" aria-hidden="true" />
+                      )}
+                      <a href={`/projects/${p.id}`} class="card-title">
+                        {p.data.title}
+                      </a>
+                      {p.data.status && <span class="status-pill">{p.data.status}</span>}
+                    </div>
+                    <p class="card-desc">{p.data.summary}</p>
+                    {p.data.tech.length > 0 && (
+                      <p class="tech">{p.data.tech.join(" · ")}</p>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </section>
       )
     }
@@ -90,18 +169,20 @@ const topProjects = await projects();
         <section>
           <div class="section-head">
             <h2>Writing</h2>
+            <p class="section-sub">Notes on building the things above.</p>
             <a href="/blog">All posts →</a>
           </div>
-          <ul class="list">
+          <ul class="posts">
             {recentPosts.map((p) => (
-              <li>
-                <a href={`/blog/${p.id}`} class="item-title">
-                  {p.data.title}
-                </a>
-                <p class="item-desc">
-                  <span class="date">{shortDate(p.data.date)}</span>
-                  {p.data.description && <span> — {p.data.description}</span>}
-                </p>
+              <li class="post">
+                <span class="date">{shortDate(p.data.date)}</span>
+                <div class="post-body">
+                  <a href={`/blog/${p.id}`} class="post-title">
+                    {p.data.title}
+                  </a>
+                  {p.data.description && <p class="post-desc">{p.data.description}</p>}
+                </div>
+                <span class="post-arrow" aria-hidden="true">→</span>
               </li>
             ))}
           </ul>
@@ -112,121 +193,415 @@ const topProjects = await projects();
 </Layout>
 
 <style>
+  /* The home page is the one page with a grid, so it gets the full site
+     width rather than the 50rem reading measure. */
+  .home {
+    max-width: var(--maxw);
+    padding-top: 2.5rem;
+    /* The hero glow below bleeds past the content box on purpose; clip it
+       sideways so it can never widen the page into a horizontal scroll. */
+    overflow-x: clip;
+  }
+
+  /* --- hero --- */
   .hero {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 1.75rem;
-    padding: 2rem 0 1rem;
+    gap: 2.25rem;
+    padding: 2.5rem 0 1.5rem;
+  }
+  /* A soft accent wash behind the hero, so the top of the page isn't a flat
+     slab. It is the theme's own accent, so it follows light/dark. */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: -4rem -2rem 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        42rem 22rem at 18% 30%,
+        color-mix(in srgb, var(--accent) 14%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        26rem 16rem at 85% 0%,
+        color-mix(in srgb, var(--tok-function) 9%, transparent),
+        transparent 70%
+      );
+  }
+  .hero-portrait {
+    flex: none;
+    position: relative;
   }
   .avatar {
-    flex: none;
-    width: 128px;
-    height: 128px;
+    display: block;
+    width: 144px;
+    height: 144px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid var(--border);
+    border: 3px solid var(--bg);
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--accent) 60%, transparent),
+      0 12px 40px -12px color-mix(in srgb, var(--accent) 50%, transparent);
   }
   .hero-text {
     min-width: 0;
   }
-  .hero h1 {
-    margin-top: 0;
-    margin-bottom: 0.3rem;
+  .role {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 0.4rem;
   }
-  /* Stack on narrow screens: side by side leaves the tagline about twelve
-     characters wide on a phone. */
-  @media (max-width: 560px) {
-    .hero {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1.1rem;
-    }
-    .avatar {
-      width: 96px;
-      height: 96px;
-    }
+  .hero h1 {
+    font-size: 2.9rem;
+    line-height: 1.1;
+    margin: 0;
   }
   .lead {
     color: var(--muted);
-    font-size: 1.1rem;
-    margin: 0.35rem 0 0;
+    font-size: 1.12rem;
+    max-width: 36rem;
+    margin: 0.9rem 0 0;
   }
-  .expertise {
+  .skills {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 1.1rem 0 0;
+    padding: 0;
+  }
+  .skills li {
     color: var(--text);
     font-family: var(--mono);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
     margin: 0;
   }
   .hero-links {
     display: flex;
-    gap: 1.2rem;
-    margin: 1.2rem 0 0;
-    font-size: 0.9rem;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.4rem 0 0;
   }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.45rem 1rem;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease,
+      transform 0.15s ease;
+  }
+  .btn:hover {
+    text-decoration: none;
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .btn-primary {
+    color: var(--on-accent);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .btn-primary:hover {
+    background: color-mix(in srgb, var(--accent) 88%, var(--text));
+  }
+
+  /* Stack on narrow screens: side by side leaves the tagline about twelve
+     characters wide on a phone. */
+  @media (max-width: 640px) {
+    .home {
+      padding-top: 1.5rem;
+    }
+    .hero {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.25rem;
+      padding-top: 1.5rem;
+    }
+    .avatar {
+      width: 104px;
+      height: 104px;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+    }
+  }
+
+  /* --- section headings --- */
   .section-head {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
     align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    border-bottom: 1px solid var(--border-soft);
-    margin-top: 3rem;
+    column-gap: 1rem;
+    margin: 3.5rem 0 1.5rem;
   }
   .section-head h2 {
-    margin: 0 0 0.6rem;
+    margin: 0;
+    padding: 0;
     border: 0;
+    font-size: 1.6rem;
+    letter-spacing: -0.01em;
   }
-  .section-head a {
+  .section-sub {
+    grid-column: 1;
+    color: var(--muted);
+    margin: 0.2rem 0 0;
+    font-size: 0.95rem;
+  }
+  .section-head > a {
+    grid-column: 2;
+    grid-row: 1;
     font-size: 0.85rem;
     color: var(--muted);
     white-space: nowrap;
   }
-  .list {
+  .section-head > a:hover {
+    color: var(--accent);
+  }
+
+  /* --- featured project cards --- */
+  .featured,
+  .grid,
+  .posts {
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  .list li {
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border-soft);
+  .featured {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 1.1rem;
   }
-  .project-row {
+  .feature {
+    position: relative;
     display: flex;
-    align-items: flex-start;
-    gap: 0.85rem;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+    transition:
+      border-color 0.15s ease,
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
   }
-  .project-icon {
+  .feature:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px -20px color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  .shot {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg);
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Screenshots differ in shape; keep the window's title bar and toolbar,
+       which is the recognisable part, and crop from the bottom. */
+    object-position: top;
+    transition: transform 0.4s ease;
+  }
+  .feature:hover .shot img {
+    transform: scale(1.03);
+  }
+  .feature-body {
+    padding: 1rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .feature-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .mini-icon {
     flex: none;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     /* No border-radius: every icon already rounds its own corners against a
        transparent surround, so clipping again just shaves them. */
-    /* Nudge down so the icon's optical centre lines up with the title's
-       cap height rather than its line box. */
-    margin-top: 0.15rem;
   }
-  .icon-link {
-    flex: none;
-    /* Shrink-wraps the icon; an inline link would add a line box below it. */
-    display: block;
-  }
-  .icon-link .project-icon {
-    display: block;
-  }
-  .project-body {
-    min-width: 0;
-  }
-  .item-title {
+  .feature-title {
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--text);
   }
-  .item-desc {
+  .feature-title::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .feature-title:hover {
+    text-decoration: none;
+  }
+  .feature-desc,
+  .card-desc {
     color: var(--muted);
-    margin: 0.3rem 0 0;
     font-size: 0.92rem;
+    margin: 0;
+    /* Three lines, then an ellipsis: the long summaries would otherwise make
+       one card twice the height of its neighbours. The full text is one
+       click away on the project page. */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tech {
+    color: var(--faint);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    margin: 0.2rem 0 0;
+  }
+
+  /* --- the rest of the projects, compact --- */
+  .grid {
+    display: grid;
+    /* auto-fill, not auto-fit: a short last row keeps the same card width
+       instead of stretching two cards across three columns. */
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: 0.9rem;
+    margin-top: 1.1rem;
+  }
+  .card {
+    position: relative;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--bg-soft);
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .card-icon {
+    flex: none;
+    width: 32px;
+    height: 32px;
+  }
+  .card-title {
+    font-weight: 700;
+    color: var(--text);
+  }
+  .card-title::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .card-title:hover {
+    text-decoration: none;
+  }
+
+  /* --- writing --- */
+  .post {
+    display: grid;
+    grid-template-columns: 7rem 1fr auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1rem 0.75rem;
+    margin: 0 -0.75rem;
+    border-radius: 10px;
+    border-bottom: 1px solid var(--border-soft);
+    position: relative;
+    transition: background 0.15s ease;
+  }
+  .post:hover {
+    background: var(--bg-soft);
   }
   .date {
     color: var(--faint);
     font-family: var(--mono);
-    font-size: 0.85em;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .post-body {
+    min-width: 0;
+  }
+  .post-title {
+    font-weight: 700;
+    color: var(--text);
+  }
+  .post-title::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .post:hover .post-title {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .post-desc {
+    color: var(--muted);
+    margin: 0.25rem 0 0;
+    font-size: 0.92rem;
+  }
+  .post-arrow {
+    color: var(--faint);
+    transition:
+      transform 0.15s ease,
+      color 0.15s ease;
+  }
+  .post:hover .post-arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+  @media (max-width: 560px) {
+    .post {
+      grid-template-columns: 1fr auto;
+    }
+    .date {
+      grid-column: 1 / -1;
+      order: -1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn,
+    .feature,
+    .shot img,
+    .post-arrow {
+      transition: none;
+    }
+    .feature:hover,
+    .btn:hover,
+    .post:hover .post-arrow {
+      transform: none;
+    }
+    .feature:hover .shot img {
+      transform: none;
+    }
   }
 </style>

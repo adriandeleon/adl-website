@@ -3,8 +3,10 @@
 
 export const site = {
   name: "Adrián De León",
-  // Shown directly under the name on the home page.
-  expertise: "Software Engineer · Java · Linux · Open Source",
+  // Shown directly under the name on the home page: the role as text, the
+  // skills as a row of chips.
+  role: "Software Engineer",
+  skills: ["Java", "Linux", "Open Source"],
   // Shown in the home-page introduction and footer.
   tagline:
     "By day, I'm a Backend Java Developer, by night, I mostly build keyboard-first, desktop software and occasionally write about it.",
