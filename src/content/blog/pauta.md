@@ -16,7 +16,7 @@ a starting point for the others. There's **Termina**, a terminal
 emulator, and **Torrenta**, a BitTorrent client. **Modula** is a
 software-defined radio receiver, **Mirada** is an image viewer, and
 **Nux** is a UPS monitor that lives in the tray. They all use JavaFX,
-they all have Spanish names, and they're all the way I want them (Yeay
+they all have Spanish-ish? names, and they're all the way I want them (Yeay
 Open Source!).
 
 By the time I got to the fourth app, I'd built the Settings window four
