@@ -6,131 +6,137 @@ tags: [pauta, javafx, desktop]
 draft: false
 ---
 
-Over the past few months I've built six desktop apps. A programmer's text
-editor, Editora, which is the one I started with and the one the others copy
-from. Termina, a terminal emulator. Torrenta, a BitTorrent client. Modula, a
-software-defined radio receiver. Mirada, an image viewer. nux, a UPS monitor
-that lives in the tray. All JavaFX, all Spanish names, all mine.
+Over the past few months I've built some desktop apps that I needed,
+nay wanted. I wanted to build Multi-platform, Keyboard-first, Command
+Palette centered apps that fill my own needs. I'm a Java developer so
+I chose JDK/JavaFX as my App platform. (Bold choice, I know!).
 
-Somewhere around the fourth one I noticed I was writing the same Settings
-window for the fourth time, and it was a little different each time.
+I started with **Editora**, a programmer's text editor, and used it as
+a starting point for the others. There's **Termina**, a terminal
+emulator, and **Torrenta**, a BitTorrent client. **Modula** is a
+software-defined radio receiver, **Mirada** is an image viewer, and
+**Nux** is a UPS monitor that lives in the tray. They all use JavaFX,
+they all have Spanish names, and they're all the way I want them (Yeay
+Open Source!).
 
-## The drift
+By the time I got to the fourth app, I'd built the Settings window four
+times. It was supposed to work the same way in each app, but I'd made it a
+little different every time, it just kind of happened.
 
-None of the differences were decisions. They were just what happened.
+## The differences
 
-Termina has its theme CSS vendored into the repository, and I'd have to go
-read the commit to tell you why. Modula ships IBM Plex Mono as its UI
-font while everything else bundles Inter. Torrenta committed a `CLAUDE.md` and
-never got an `AGENTS.md`, so the coding agent instructions live in a file named
-for one vendor. nux never got NullAway turned on. Termina has a Debug Log but no
-Message Log, which means an error flashes in the status bar and is gone, with
-nothing to click on to read it again.
+**Termina** has its theme CSS vendored into the repository instead of just
+using AtlantaFX. I'd have to look up the commit to tell you why.
+**Modula** ships IBM Plex Mono for its UI while the others bundle Inter.
+**Torrenta** has a `CLAUDE.md` but no `AGENTS.md`, so its coding agent
+instructions live in a file named for one vendor. I never enabled
+NullAway in **Nux**.
 
-Each of those is five minutes to fix. The problem was that nothing told me
-they were wrong. Editora had grown a bunch of small habits that I was happy
-with, and the other apps had copied some of them, from memory, badly.
+**Termina** also has a Debug Log but no Message Log. An error flashes in
+the status bar, and once it disappears there's nowhere to read it
+again. Not what I want, but while building it, it wasn't a top
+priority to be honest.
 
-So I sat down and wrote the habits out.
+Most of these are quick fixes once I notice them. I'd settled on a way of
+doing things in **Editora**, and every time I started another app I'd copy over
+whatever I remembered. Sometimes I'd forget a detail or do it differently
+without realizing. So I started to wrote down what I wanted the apps to share.
 
-## What it turned into
+## Pauta
 
-I called it Pauta. In Spanish a *pauta* is a guideline, and it's also the word
-for the ruled lines on writing paper, which felt right for a document whose
-whole job is to keep things lined up. The mark is three ruled lines and a tick.
+I called the guide **Pauta** (full name P**auta: adl's Desktop apps**
+**guidelines**, yes is a name-full). In Spanish, *pauta* can mean a
+guideline or the ruled lines on writing paper. *(The icon is three ruled*
+*lines and a tick)*
 
-It opens with thirteen principles. Ten of them are about the person using the
-app, and most of those are things I've wanted from other people's software for
-years: every action works from the keyboard, settings apply the moment you
-change them, nothing fails silently, nothing phones home. One I'm unreasonably
-attached to is *never claim what is not true*. No link that looks like a link
-and does nothing. No "up to date" in the About window before the update check
-has actually returned. If a setting needs a restart, its own row says so,
-instead of letting you think it worked.
+The guide starts with a list of principles. Ten are about using the apps.
+I want to be able to do everything from the keyboard, see settings take
+effect as soon as I change them, and find out when something fails. I don't
+want the app phoning home.
 
-The other three are for me, the person building them, and they're the ones I
-break most often. One source of truth for every fact, with a test that fails
-when two copies drift apart. Decisions pulled out of the UI into small pure
-methods so they can be tested without a window. And the one I had to learn the
-hard way: verify a UI change by running the real app and pressing the real keys,
-because UI bugs don't throw exceptions, and reasoning about event order is not
-evidence that the thing works.
+I mean, I made them, so any phoning home would be to ***me***, but the
+point stands, I hate apps that phone home.
 
-Under the principles are the actual rules, each tagged MUST, SHOULD or MAY, and
-each one points at the class in Editora to copy from. That last part was the
-whole reason to write it. A rule that says "have a Message Log" is a wish. A
-rule that says "have a Message Log, see `ui/MessageLog` and `ui/MessageLogPopup`"
-is an afternoon.
+One I'm unreasonably attached to is *never claim what is not true*. If
+something looks like a link, it should work. The About window should wait
+for the update check before it says "up to date". If a setting needs a
+restart, say so in the same row.
 
-I also wrote down a rule I'd been following without knowing it had a name.
-Modula has no gain control, no bandwidth control, no squelch, on purpose. When
-I tried to explain the purpose, the test that came out was: would a car radio
-have it? A preset button, yes. A spinner for decimation stages, no. If a
-setting has one right answer, pick it and don't ship the knob. That's now a
-paragraph in the Settings page, and I'm a bit embarrassed it took a radio app
-to make me say it out loud.
+I break the other three more often. Keep one source of truth for each fact
+and add a test that fails if two copies get out of sync. Pull decisions out
+of the UI into small, pure methods so I can test them without opening a
+window.
 
-## The uncomfortable table
+And when I change the UI, run the app and press the actual keys.
+I've stared at JavaFX event handlers and convinced myself they'd run in
+a certain order, then pressed the keys and found out I was wrong.
 
-The part of the guide I look at most is a feature matrix: six columns, one per
-app, a row for every rule, and a dot in each cell. Full dot, half dot, or a
-dash. Below it there's a page that lists, per app, every MUST it fails.
+In **[Pauta](https://pauta-project.dev/)**, The rules are marked **MUST**, **SHOULD** or **MAY**, and each one points to the code
+in **Editora** I can copy/review. When I need to add a Message Log, I can go straight
+to `ui/MessageLog.java` and `ui/MessageLogPopup.java`.
 
-Editora is the reference implementation, and Editora fails its own guide. One
-line, but still: nobody signs their Windows installer. Not Editora, not any of
-them. Authenticode has been on the someday list for every one of them, and now
-there's a column of six dashes that won't let me leave it there.
+Funny story: there's a rule on the Settings page that came out of
+building **Modula**. I left out gain, bandwidth and squelch controls on
+purpose. When I was deciding what to put in the UI, I'd ask myself
+whether I'd expect to find it on a car radio. A preset button would
+make sense. I'd be surprised to find a spinner for decimation stages.
+If there's one right value for a setting, I pick it and leave the
+control out.
 
-Modula's row is longer. No coverage gate, no translations, no settings search,
-no Message Log, no way to report a problem from inside the app. I knew all of
-that in the vague way you know your car needs an oil change. Seeing it as a
-list changed it from a feeling into a backlog, which is the only form of guilt
-I've ever found useful.
+## The feature matrix
 
-## Who it's for
+The feature matrix is the page I look at most. It has six columns, one
+per app, and a row for every rule. A full dot means the app implements the
+rule, a half dot means it implements part of it, and a dash means it's
+missing. There's also a page listing every **MUST** each app fails.
 
-I wrote it for myself first. I won't pretend otherwise: the rules point at
-my editor, the matrix has my six apps in its columns, and the gaps page is my
-backlog. But I put it on a public site under an MIT licence because I think
-most of it travels.
+**Editora** is the reference implementation and it still fails one
+rule. None of the six apps has a signed Windows installer. I've been
+meaning to set up
+[Authenticode](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/authenticode)
+for a while. That row has six dashes in it. I'll get to this one soon, promise!
 
-Part of the audience is the coding agents I work with. Editora's README says
-it was built with help from AI coding tools, the guide makes that line a MUST
-for the rest, and a lot of the drift above is exactly what you'd expect from
-that. An agent working on Termina doesn't know what Editora's Settings window
-does unless something tells it. It will build a perfectly reasonable Settings
-window that is reasonable in a slightly different direction. So the guide
-builds itself into a single Markdown file and a PDF on every push. The
-Markdown version is there to drop into a session and say "like this", and it
-works the same whether the session is mine or yours.
+**Modula** is missing a coverage gate, translations, settings search, a
+Message Log and a way to report a problem from inside the app. I knew
+about each of those, but I'd never put them all in one place. Now I can
+use the gaps page as my backlog.
 
-The other part is anyone else building desktop apps on the JDK. The platform
-pages (JDK 25, JavaFX 27, AtlantaFX, NullAway, jpackage and JReleaser for
-signed installers on every OS) are the setup I'd hand to a friend who asked
-how to start. The principles don't depend on the stack at all. And the
-template repository that goes with the guide is a GitHub template, so "Use
-this template" and one rename script gets anyone a small runnable app with
-tests, CI, release workflows and every repository document already in place.
-I'd done that first hour by hand six times, a bit differently each time, which
-is where this post started.
+## Why Pauta is public
+
+I wrote **[Pauta](https://pauta-project.dev/)** for my own projects and
+put it on a public site under an MIT license. The principles apply to
+desktop apps on other stacks too.
+
+I wanted something I could hand to the coding agents I use. **Editora's**
+README says it was built with help from AI coding tools, and **Pauta** makes
+that disclosure a **MUST** for the other apps. An agent working on **Termina**
+has no reason to know how I built the Settings window in **Editora**. On
+every push, **Pauta** builds a single Markdown file and a PDF. I can drop
+the Markdown file into a session so the agent has the rules and the
+examples at hand.
+
+The platform pages cover the setup I'd give a friend starting a JavaFX
+project. That's **JDK 25**, **JavaFX 27**, **AtlantaFX**, **NullAway**, and **jpackage** and
+**JReleaser** for signed installers on every OS. There's a companion [GitHub
+template](https://github.com/adriandeleon/adl-desktop-app-template) too.
+
+Click "*Use this template*" and run the rename script, and you have a
+small runnable app with tests, CI, release workflows and all the
+repository documents. I've done that by hand six times, a little
+differently each time.
 
 ## Two days in
 
-The first edition is two days old and it's at 1.1 already, which tells you
-something about how settled my opinions were. There were fewer principles on
-the first day; the rest showed up when I went back through the apps looking
-for things they already agreed on without my having noticed. The performance
-page, the one about never doing I/O on the JavaFX thread, mostly describes a
-shape every Editora service already had. I just hadn't seen it as a pattern
-until I had to write it down.
+**Pauta** is two days old and already at 1.1. The first version had fewer
+principles. I added the rest after going back through the apps and noticing
+things they already agreed on. The performance page says to keep I/O off
+the JavaFX Application Thread, which is how every **Editora** service already
+worked. I hadn't thought of it as a rule until I wrote it down.
 
-It'll keep changing, and the rule for that is written down too: a new MUST
-that existing apps fail is a major version. I expect to be at 2.0 by the time
-any of them gets a signed Windows installer.
+I also added a versioning rule. A new MUST that existing apps fail means
+a major version bump. I expect **Pauta** to hit 2.0 before I sign any of those
+Windows installers.
 
-If you build desktop apps, or more than one of anything that has started to
-disagree with itself, [the guide is here](https://pauta-project.dev).
-Take the parts that fit. Some of it is specific to my stack and a fair amount
-is specific to my taste, and that's fine; it's meant to be copied from, not
-adopted whole. The one piece I'd recommend to anyone, whatever you build, is
-the matrix: a column of dots per app that doesn't let you look away.
+If you're building desktop apps, [the guide is here](https://pauta-project.dev).
+Copy whatever fits. I'd start with the matrix. It took seeing all six apps
+side by side for me to realize how much I'd been keeping in my head.
