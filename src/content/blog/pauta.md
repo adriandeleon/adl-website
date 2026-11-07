@@ -1,5 +1,5 @@
 ---
-title: "Writing down the rules my desktop apps share"
+title: "Pauta: Writing down the rules for my desktop apps."
 description: "I build six JavaFX desktop apps. I finally wrote down the rules they were all supposed to share, found out which ones they didn't, and put the guide where anyone can use it."
 date: 2026-11-06
 tags: [pauta, javafx, desktop]
