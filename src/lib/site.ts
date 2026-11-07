@@ -34,4 +34,9 @@ export const nav = [
   { href: "/projects", label: "Projects" },
   { href: "/blog", label: "Blog" },
   { href: "https://github.com/adriandeleon", label: "GitHub", external: true },
+  {
+    href: "https://www.linkedin.com/in/adriandeleonsaldivar/",
+    label: "LinkedIn",
+    external: true,
+  },
 ];
