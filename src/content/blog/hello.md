@@ -35,3 +35,26 @@ lists, tables, block quotes, and fenced code blocks.
 
 > Nothing here needs a component or a layout choice. Write the file, save it,
 > and it shows up.
+
+## Images
+
+Put a post's images in a folder named after the post, next to the Markdown
+file, and link them with a relative path:
+
+```text
+src/content/blog/
+  hello.md
+  hello/
+    editora-welcome.png
+```
+
+```md
+![Editora’s welcome screen, listing recent files and the command palette shortcut](./hello/editora-welcome.png)
+```
+
+![Editora’s welcome screen, listing recent files and the command palette shortcut](./hello/editora-welcome.png)
+
+At build time Astro converts these to WebP, sizes them, lazy-loads them, and
+fails the build if a path is wrong. Always fill in the alt text. For a file
+that must be served exactly as-is (an animated GIF, say), put it under
+`public/` and link it with an absolute path like `/images/demo.gif` instead.
