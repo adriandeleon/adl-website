@@ -7,7 +7,9 @@ draft: false
 ---
 
 Over the past few months I've built some desktop apps that I needed,
-nay wanted. I wanted to build Multi-platform, Keyboard-first, Command
+nay wanted, is more accurate to be honest.
+
+I wanted to build Multi-platform, Keyboard-first, Command
 Palette centered apps that fill my own needs. I'm a Java developer so
 I chose JDK/JavaFX as my App platform. (Bold choice, I know!).
 
