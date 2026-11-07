@@ -129,7 +129,7 @@ that existing apps fail is a major version. I expect to be at 2.0 by the time
 any of them gets a signed Windows installer.
 
 If you build desktop apps, or more than one of anything that has started to
-disagree with itself, [the guide is here](https://adriandeleon.github.io/adl-desktop-apps-guidelines/).
+disagree with itself, [the guide is here](https://pauta-project.dev).
 Take the parts that fit. Some of it is specific to my stack and a fair amount
 is specific to my taste, and that's fine; it's meant to be copied from, not
 adopted whole. The one piece I'd recommend to anyone, whatever you build, is

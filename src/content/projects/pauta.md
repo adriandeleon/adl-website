@@ -5,7 +5,7 @@ order: -1
 status: "Active"
 tech: ["Astro Starlight", "Markdown", "Pandoc"]
 repo: "https://github.com/adriandeleon/adl-desktop-apps-guidelines"
-url: "https://adriandeleon.github.io/adl-desktop-apps-guidelines/"
+url: "https://pauta-project.dev"
 year: "2026–"
 ---
 
