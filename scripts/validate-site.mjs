@@ -59,6 +59,12 @@ for (const file of htmlFiles) {
 
   for (const image of markup.match(/<img\b[^>]*>/gi) ?? []) {
     if (!/\salt(?:=|\s|>)/i.test(image)) report(file, "image is missing alt text");
+    // Astro 5 double-escapes Markdown image alt text, so a straight apostrophe
+    // in ![Editora's ...](...) reaches readers as "Editora&#x27;s". Use a
+    // curly apostrophe (’) or reword.
+    if (/\salt=("[^"]*&amp;(?:#\w+|\w+);[^"]*")/i.test(image)) {
+      report(file, "image alt text is double-escaped (avoid ' & \" < > in Markdown alt text)");
+    }
   }
   for (const button of markup.match(/<button\b[^>]*>[\s\S]*?<\/button>/gi) ?? []) {
     const visibleText = button.replace(/<[^>]+>/g, "").trim();

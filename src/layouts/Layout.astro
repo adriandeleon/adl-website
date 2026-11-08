@@ -650,6 +650,15 @@ const isActive = (href: string) => {
   .doc td {
     color: var(--muted);
   }
+  /* Post images keep their real pixel width as an attribute (Astro sets it
+     to avoid layout shift); cap them to the column and keep the ratio. */
+  .doc img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
 
   @media (max-width: 700px) {
     .footer-cols {
