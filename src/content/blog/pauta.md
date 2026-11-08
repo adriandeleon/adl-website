@@ -24,9 +24,24 @@ as a starting point for the others.
 They all use JavaFX, they all have Spanish-*ish?* names, and they're
 all the way I want them (Yeay Open Source!).
 
+<div class="app-icons">
+
+![Editora icon](./pauta/icon-editora.png)
+![Termina icon](./pauta/icon-termina.png)
+![Torrenta icon](./pauta/icon-torrenta.png)
+![Modula icon](./pauta/icon-modula.png)
+![Mirada icon](./pauta/icon-mirada.png)
+![Nux icon](./pauta/icon-nux.png)
+
+</div>
+
 By the time I got to the fourth app, I'd built the Settings window four
 times. It was supposed to work the same way in each app, but I'd made it a
 little different every time, it just kind of happened.
+
+<!-- IMAGE (top pick): the Settings window from four apps, side by side.
+![The Settings window in Editora, Termina, Torrenta and Modula, each laid out slightly differently](./pauta/settings-four-apps.png)
+-->
 
 ## The differences
 
@@ -42,6 +57,11 @@ the status bar, and once it disappears there's nowhere to read it
 again. Not what I want, but while building it, it wasn't a top
 priority to be honest.
 
+<!-- IMAGE: Termina's status-bar error next to Editora's Message Log popup.
+     For an animated GIF of the error flashing, put it in public/images/ and use /images/termina-status-error.gif instead.
+![Left, an error message in Termina’s status bar. Right, the same kind of error listed in Editora’s Message Log popup](./pauta/message-log-vs-status-bar.png)
+-->
+
 Most of these are quick fixes once I notice them. I'd settled on a way of
 doing things in **Editora**, and every time I started another app I'd copy over
 whatever I remembered. Sometimes I'd forget a detail or do it differently
@@ -49,10 +69,16 @@ without realizing. So I started to wrote down what I wanted the apps to share.
 
 ## Pauta
 
-I called the guide **Pauta** (full name P**auta: adl's Desktop apps**
+I called the guide **[Pauta](https://pauta-project.dev/)** (full name P**auta: adl's Desktop apps**
 **guidelines**, yes is a name-full). In Spanish, *pauta* can mean a
 guideline or the ruled lines on writing paper. *(The icon is three ruled*
 *lines and a tick)*
+
+<div class="icon-image">
+
+![The Pauta icon: three ruled lines with a tick mark](./pauta/pauta-icon.png)
+
+</div>
 
 The guide starts with a list of principles. Ten are about using the apps.
 I want to be able to do everything from the keyboard, see settings take
@@ -67,6 +93,10 @@ something looks like a link, it should work. The About window should wait
 for the update check before it says "up to date". If a setting needs a
 restart, say so in the same row.
 
+<!-- IMAGE: the About window while the update check is still running.
+![An About window showing “Checking for updates…” instead of claiming the app is up to date](./pauta/about-checking-updates.png)
+-->
+
 I break the other three more often. Keep one source of truth for each fact
 and add a test that fails if two copies get out of sync. Pull decisions out
 of the UI into small, pure methods so I can test them without opening a
@@ -80,6 +110,8 @@ In **[Pauta](https://pauta-project.dev/)**, The rules are marked **MUST**, **SHO
 in **Editora** I can copy/review. When I need to add a Message Log, I can go straight
 to `ui/MessageLog.java` and `ui/MessageLogPopup.java`.
 
+![The Message Log page in Pauta: a rule marked MUST for every app with a status bar, pointing to Editora’s ui/MessageLog.java and ui/MessageLogPopup.java](./pauta/rule-entry.png)
+
 Funny story: there's a rule on the Settings page that came out of
 building **Modula**. I left out gain, bandwidth and squelch controls on
 purpose. When I was deciding what to put in the UI, I'd ask myself
@@ -88,23 +120,33 @@ make sense. I'd be surprised to find a spinner for decimation stages.
 If there's one right value for a setting, I pick it and leave the
 control out.
 
+<div class="narrow-image">
+
+![Modula tuned to 106.9 MHz, with a spectrum display, tuning buttons, station presets and a volume slider, but no gain, bandwidth or squelch controls](./pauta/modula-radio.png)
+
+</div>
+
 ## The feature matrix
 
 The feature matrix is the page I look at most. It has six columns, one
 per app, and a row for every rule. A full dot means the app implements the
-rule, a half dot means it implements part of it, and a dash means it's
+rule, a half dot means it implements part of it, and an empty dot means it's
 missing. There's also a page listing every **MUST** each app fails.
+
+![The Release and signing section of the Pauta feature matrix: one column per app, one row per rule, with full, half and empty dots. The Windows .msi Authenticode row is empty for all six apps](./pauta/feature-matrix.png)
 
 **Editora** is the reference implementation and it still fails one
 rule. None of the six apps has a signed Windows installer. I've been
 meaning to set up
 [Authenticode](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/authenticode)
-for a while. That row has six dashes in it. I'll get to this one soon, promise!
+for a while. That row has six empty dots in it. I'll get to this one soon, promise!
 
 **Modula** is missing a coverage gate, translations, settings search, a
 Message Log and a way to report a problem from inside the app. I knew
 about each of those, but I'd never put them all in one place. Now I can
 use the gaps page as my backlog.
+
+![The Pauta gaps page: a table listing the missing MUST rules for each of the six apps, with Modula’s row the longest](./pauta/gaps.png)
 
 ## Why Pauta is public
 
@@ -129,6 +171,10 @@ Click "*Use this template*" and run the rename script, and you have a
 small runnable app with tests, CI, release workflows and all the
 repository documents. I've done that by hand six times, a little
 differently each time.
+
+<!-- IMAGE (optional): the app you get from the template after running the rename script.
+![A freshly generated app from the adl desktop app template, running with its default window](./pauta/template-app.png)
+-->
 
 ## Two days in
 

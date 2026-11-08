@@ -659,6 +659,30 @@ const isActive = (href: string) => {
     border: 1px solid var(--border);
     border-radius: var(--radius);
   }
+  /* A small window screenshot at full column width is taller than the
+     screen. Wrap it in <div class="narrow-image"> (blank lines around the
+     Markdown image) to show it smaller and centered. */
+  .doc .narrow-image img {
+    max-width: min(100%, 26rem);
+    margin-inline: auto;
+  }
+  /* App icons already have their own shape, so no frame. <div class="icon-image">
+     shows one icon; <div class="app-icons"> lays several out in a row. */
+  .doc .icon-image img,
+  .doc .app-icons img {
+    width: 4.5rem;
+    border: 0;
+    border-radius: 0;
+  }
+  .doc .icon-image img {
+    margin-inline: auto;
+  }
+  .doc .app-icons p {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
 
   @media (max-width: 700px) {
     .footer-cols {
