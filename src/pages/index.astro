@@ -82,6 +82,32 @@ const glyphs: Record<string, string> = {
     </section>
 
     {
+      recentPosts.length > 0 && (
+        <section>
+          <div class="section-head">
+            <h2>Writing</h2>
+            <p class="section-sub">Notes on building the things below.</p>
+            <a href="/blog">All posts →</a>
+          </div>
+          <ul class="posts">
+            {recentPosts.map((p) => (
+              <li class="post">
+                <span class="date">{shortDate(p.data.date)}</span>
+                <div class="post-body">
+                  <a href={`/blog/${p.id}`} class="post-title">
+                    {p.data.title}
+                  </a>
+                  {p.data.description && <p class="post-desc">{p.data.description}</p>}
+                </div>
+                <span class="post-arrow" aria-hidden="true">→</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
       allProjects.length > 0 && (
         <section>
           <div class="section-head">
@@ -160,32 +186,6 @@ const glyphs: Record<string, string> = {
               })}
             </ul>
           )}
-        </section>
-      )
-    }
-
-    {
-      recentPosts.length > 0 && (
-        <section>
-          <div class="section-head">
-            <h2>Writing</h2>
-            <p class="section-sub">Notes on building the things above.</p>
-            <a href="/blog">All posts →</a>
-          </div>
-          <ul class="posts">
-            {recentPosts.map((p) => (
-              <li class="post">
-                <span class="date">{shortDate(p.data.date)}</span>
-                <div class="post-body">
-                  <a href={`/blog/${p.id}`} class="post-title">
-                    {p.data.title}
-                  </a>
-                  {p.data.description && <p class="post-desc">{p.data.description}</p>}
-                </div>
-                <span class="post-arrow" aria-hidden="true">→</span>
-              </li>
-            ))}
-          </ul>
         </section>
       )
     }
