@@ -3,7 +3,7 @@ title: "Aguas"
 summary: "Water levels for the three dams supplying Monterrey, with the history the official source never publishes — scraped daily and backfilled to 2007."
 order: 6
 status: "Active"
-tech: ["Java 21", "Spring Boot", "SQLite", "Thymeleaf", "Tailwind CSS"]
+tech: ["Java 25", "Spring Boot", "SQLite", "Thymeleaf", "Tailwind CSS"]
 url: "https://aguas-nl.mx"
 year: "2026"
 ---
