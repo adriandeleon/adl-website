@@ -1,8 +1,8 @@
 ---
 title: "jkit"
-summary: "Installs and switches JDKs from 20+ vendors, plus Maven and Gradle — one small native command, no bash scripts and no JDK needed to run it."
+summary: "Installs and switches JDKs from 20+ vendors, plus Maven, Gradle and sbt — one small native command, no bash scripts and no JDK needed to run it."
 order: 8
-status: "Prototype"
+status: "Active"
 tech: ["Java 25", "picocli", "GraalVM native-image", "foojay"]
 repo: "https://github.com/adriandeleon/jkit"
 url: "https://jkit-project.dev"
@@ -10,16 +10,16 @@ year: "2026–"
 ---
 
 jkit installs and switches Java toolchains: JDKs from Temurin, Corretto, Zulu,
-Liberica, Oracle, GraalVM, SapMachine, Semeru, Microsoft and more, plus Maven
-and Gradle. Name a version, and optionally a vendor — `jkit install jdk@21`,
+Liberica, Oracle, GraalVM, SapMachine, Semeru, Microsoft and more, plus Maven,
+Gradle and sbt. Name a version, and optionally a vendor — `jkit install jdk@21`,
 `jkit install jdk@17 zulu` — and it does the rest.
 
 ## One native binary
 
 jkit is written in Java 25 with picocli and compiled with GraalVM
 native-image, so the command itself needs no JDK and starts in milliseconds —
-fast enough to run from a shell prompt without slowing it down. The same
-binary is meant for Linux, macOS and Windows, without WSL or Git Bash.
+fast enough to run from a shell prompt without slowing it down. It runs
+on Linux, macOS and Windows, without WSL or Git Bash.
 
 ## This shell or every shell
 
@@ -39,7 +39,9 @@ version, with LTS releases and what is already installed marked.
 
 ## Status
 
-A working prototype, tested on Linux: search, install, upgrade, use, reset,
-list, remove, the shell hook and tab completion. Native `.deb` and `.rpm`
-packages build in pure Java. Project files (`jkit.toml`, `jkit.lock`),
-`doctor`, self-update, and Windows and macOS testing are next.
+Public since 0.3; the current release is 0.5.0. Projects pin their versions
+in `jkit.toml` (or keep their `.sdkmanrc`, `.tool-versions` or
+`.java-version`), and the shell switches when you `cd` into one. `status`,
+`doctor`, `prune` and `self-update` are in, and releases ship through Homebrew,
+apt, winget, `.deb`, `.rpm` and signed macOS binaries. Windows support is still
+a preview.
